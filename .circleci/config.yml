@@ -1,0 +1,32 @@
+version: 2.1
+
+executors:
+  deploy:
+    docker:
+      - image: cimg/deploy:2025.01
+    resource_class: medium
+
+workflows:
+  main-workflow:
+    jobs:
+      - lint
+      - test
+
+jobs:
+  lint:
+    executor: deploy
+    steps:
+      - checkout
+      - run:
+          name: Run linting
+          command: |
+            echo "TODO: Add linting"
+
+  test:
+    executor: deploy
+    steps:
+      - checkout
+      - run:
+          name: Run tests
+          command: |
+            echo "TODO: Add tests"
