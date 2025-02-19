@@ -5,4 +5,4 @@ prometheusOperator:
   replicas: 1
   image:
     repository: quay.io/prometheus-operator/prometheus-operator
-    tag: v0.80.0
+    tag: v0.80.1
