@@ -2,5 +2,7 @@
 .DS_Store
 /.idea
 /*.iml
+
 /bin
+charts/*.tgz
 /target
