@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  slack: circleci/slack@5.1.1
+
 executors:
   deploy:
     docker:
@@ -18,15 +21,32 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Run linting
+          name: Install dependencies
           command: |
-            echo "TODO: Add linting"
+            helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+            helm dependency build
+      - run:
+          command: helm template --debug .
+          when: always
+      - run:
+          command: helm lint --strict
+          when: always
+      - run:
+          command: ./do kubeconform
+          when: always
+      - notify_failing_main
 
   test:
     executor: deploy
     steps:
       - checkout
-      - run:
-          name: Run tests
-          command: |
-            echo "TODO: Add tests"
+      - run: ./do unit-tests
+
+commands:
+  notify_failing_main:
+    steps:
+      - slack/notify:
+          channel: server-alerts
+          branch_pattern: main
+          event: fail
+          template: basic_fail_1

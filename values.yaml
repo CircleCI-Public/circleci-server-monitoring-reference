@@ -1,0 +1,8 @@
+global:
+  imagePullSecrets: []
+
+prometheusOperator:
+  replicas: 1
+  image:
+    repository: quay.io/prometheus-operator/prometheus-operator
+    tag: v0.80.0
