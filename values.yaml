@@ -6,3 +6,20 @@ prometheusOperator:
   image:
     repository: quay.io/prometheus-operator/prometheus-operator
     tag: v0.80.1
+  prometheusConfigReloader:
+    image:
+      repository: quay.io/prometheus-operator/prometheus-config-reloader
+      tag: v0.80.1
+
+prometheus:
+  replicas: 2
+  image:
+    repository: quay.io/prometheus/prometheus
+    tag: v3.2.0
+  serviceMonitor:
+    selectorLabels:
+      app.kubernetes.io/instance: circleci-server
+      app.kubernetes.io/name: telegraf
+    selectorNamespaces: []
+    endpoints:
+      - port: prometheus-client

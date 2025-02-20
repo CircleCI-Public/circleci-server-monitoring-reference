@@ -1,0 +1,24 @@
+suite: test prometheus service monitor
+templates:
+  - prometheus/servicemonitor.yaml
+tests:
+  - it: should be a service monitor
+    asserts:
+      - isKind:
+          of: ServiceMonitor
+
+  - it: should configure the service monitor settings
+    set:
+      prometheus.serviceMonitor.selectorLabels.app: "prometheus"
+      prometheus.serviceMonitor.selectorNamespaces[0]: "circleci-server"
+      prometheus.serviceMonitor.endpoints[0].port: 9090
+    asserts:
+      - equal:
+          path: spec.selector.matchLabels.app
+          value: prometheus
+      - equal:
+          path: spec.namespaceSelector.matchNames[0]
+          value: circleci-server
+      - equal:
+          path: spec.endpoints[0].port
+          value: 9090
