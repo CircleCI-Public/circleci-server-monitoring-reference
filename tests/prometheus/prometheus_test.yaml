@@ -1,0 +1,29 @@
+suite: test prometheus
+templates:
+  - prometheus/prometheus.yaml
+tests:
+  - it: should work
+    set:
+      prometheus.replicas: 3
+      prometheus.image.repository: myregistry.io/prometheus
+      prometheus.image.tag: 0.0.0
+    asserts:
+      - isKind:
+          of: Prometheus
+      - matchRegex:
+          path: metadata.name
+          pattern: prometheus
+      - equal:
+          path: spec.replicas
+          value: 3
+      - equal:
+          path: spec.image
+          value: myregistry.io/prometheus:0.0.0
+
+  - it: should set image pull secrets
+    set:
+      global.imagePullSecrets: [regcred]
+    asserts:
+      - equal:
+          path: spec.imagePullSecrets[0].name
+          value: regcred

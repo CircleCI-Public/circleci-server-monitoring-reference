@@ -8,6 +8,8 @@ metadata:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
     app.kubernetes.io/version: {{ $tag }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
   name: prometheus-operator
 spec:
   replicas: {{ .Values.prometheusOperator.replicas }}
@@ -32,7 +34,9 @@ spec:
       containers:
         - args:
             - --kubelet-service=kube-system/kubelet
-            - -prometheus-config-reloader={{ printf "%s-config-reloader:%s" $repository $tag }}
+            {{- with .Values.prometheusOperator.prometheusConfigReloader.image }}
+            - --prometheus-config-reloader={{ .repository }}:{{ .tag }}
+            {{- end }}
             - --kubelet-endpoints=true
             - --kubelet-endpointslice=false
           env:

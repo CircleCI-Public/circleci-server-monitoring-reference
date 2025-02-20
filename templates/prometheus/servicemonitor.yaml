@@ -1,0 +1,21 @@
+{{- with .Values.prometheus.serviceMonitor }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  selector:
+    matchLabels:
+{{ toYaml .selectorLabels | indent 6 }}
+{{- if .selectorNamespaces }}
+  namespaceSelector:
+    matchNames:
+{{ toYaml .selectorNamespaces | indent 6 }}
+{{- end }}
+  endpoints:
+{{ toYaml .endpoints | indent 4 }}
+{{- end }}

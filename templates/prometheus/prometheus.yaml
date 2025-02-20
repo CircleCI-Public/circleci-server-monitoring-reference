@@ -1,0 +1,32 @@
+{{- $repository := .Values.prometheus.image.repository -}}
+{{- $tag := .Values.prometheus.image.tag -}}
+
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  {{- with .Values.global.imagePullSecrets }}
+  imagePullSecrets:
+        {{- range . }}
+    - name: {{ . }}
+        {{- end }}
+  {{- end }}
+  image: {{ printf "%s:%s" $repository $tag }}
+  nodeSelector:
+    kubernetes.io/os: linux
+  replicas: {{ .Values.prometheus.replicas }}
+  resources:
+    requests:
+      memory: 400Mi
+  securityContext:
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: prometheus
+  version: {{ $tag }}
+  serviceMonitorSelector: {}
