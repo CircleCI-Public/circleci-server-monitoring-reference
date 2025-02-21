@@ -9,6 +9,48 @@ This repository is currently under active development and is not yet a supported
 
 A reference Helm chart for setting up a monitoring stack for CircleCI server
 
+## Installing the Monitoring Stack
+
+### 1. Configure Server for the Monitoring Stack
+
+To set up monitoring for a CircleCI server instance, you need to configure Telegraf to set up a Prometheus client and expose a metrics endpoint. Add the following configuration to the CircleCI server Helm chart values:
+
+```yaml
+telegraf:
+  config:
+    outputs:
+      - file:
+          files: ["stdout"]
+      - prometheus_client:
+          listen: ":9273"
+```
+
+### 2. Install the Helm Chart
+Install the Helm chart using the following command. This assumes you are installing it in the same namespace as your CircleCI server:
+
+```bash
+$ helm install circleci-server-monitoring-stack . --wait -n <your-server-namespace>
+```
+
+> **_NOTE:_**  The `--wait` flag is important to ensure all dependencies are fully installed first.
+
+> **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
+
+### 3. Verify Prometheus Is Up and Targeting Telegraf
+To verify that Prometheus is working correctly and targeting Telegraf, use the following command to port-forward Prometheus:
+
+```bash
+$ kubectl port-forward svc/prometheus 9090:9090 -n <your-namespace-here>
+```
+
+Then visit http://localhost:9090/targets in your browser. Verify that Telegraf appears as a target and that its state is "up".
+
+![Prometheus UI showing Telegraf target as up](docs/images/prometheus-telegraf-targets.png)
+
+### 4. Next Steps
+
+[TODO: Add next steps]
+
 ![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square)
 
 ## Requirements
