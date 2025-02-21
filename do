@@ -26,6 +26,17 @@ unit-tests() {
     helm unittest -f 'tests/**/*_test.yaml' . "$@"
 }
 
+# This variable is used, but shellcheck can't tell.
+# shellcheck disable=SC2034
+help_helm_docs="Run helm-docs"
+helm-docs() {
+    if ! [ -x "$(command -v helm-docs)" ]; then
+        docker run --rm --volume "$(pwd):/helm-docs" -u $(id -u) jnorwood/helm-docs:latest
+    else
+      helm-docs
+    fi
+}
+
 check-helm() {
     if ! [ -x "$(command -v helm)" ]; then
         echo 'Helm is required. See: https://helm.sh/docs/intro/install/'
