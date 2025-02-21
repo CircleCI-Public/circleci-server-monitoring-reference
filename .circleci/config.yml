@@ -14,6 +14,7 @@ workflows:
     jobs:
       - lint
       - test
+      - docs
 
 jobs:
   lint:
@@ -41,6 +42,22 @@ jobs:
     steps:
       - checkout
       - run: ./do unit-tests
+
+  docs:
+    executor: deploy
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: ./do helm-docs
+      - run:
+          name: Check for uncommitted helm-docs changes
+          command: |
+            if [ -n "$(git diff --exit-code)" ]; then
+              echo "Detected uncommitted changes after running ./do helm-docs. Please run './do helm-docs' locally and commit the changes."
+              exit 1
+            else
+              echo "No uncommitted changes detected."
+            fi
 
 commands:
   notify_failing_main:

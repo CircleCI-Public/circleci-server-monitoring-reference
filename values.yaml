@@ -1,25 +1,40 @@
 global:
+  # -- List of image pull secrets to be used across the deployment.
   imagePullSecrets: []
 
 prometheusOperator:
+  # -- Number of Prometheus Operator replicas to deploy.
   replicas: 1
   image:
+    # -- Image repository for Prometheus Operator.
     repository: quay.io/prometheus-operator/prometheus-operator
+    # -- Tag for the Prometheus Operator image.
     tag: v0.80.1
   prometheusConfigReloader:
     image:
+      # -- Image repository for Prometheus Config Reloader.
       repository: quay.io/prometheus-operator/prometheus-config-reloader
+      # -- Tag for the Prometheus Config Reloader image.
       tag: v0.80.1
 
 prometheus:
+  # -- Number of Prometheus replicas to deploy.
   replicas: 2
   image:
+    # -- Image repository for Prometheus.
     repository: quay.io/prometheus/prometheus
+    # -- Tag for the Prometheus image.
     tag: v3.2.0
   serviceMonitor:
+    # -- Labels to select ServiceMonitors for scraping metrics.
+    # -- By default, it's configured to scrape the existing Telegraf deployment in CircleCI server.
     selectorLabels:
       app.kubernetes.io/instance: circleci-server
       app.kubernetes.io/name: telegraf
+    # -- Namespaces to look for ServiceMonitor objects. Set this if the CircleCI
+    # -- server monitoring stack is deploying in a different namespace than the
+    # -- actual CircleCI server installation.
     selectorNamespaces: []
     endpoints:
-      - port: prometheus-client
+      - # -- Port name for the Prometheus client service.
+        port: prometheus-client
