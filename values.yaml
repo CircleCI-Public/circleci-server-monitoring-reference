@@ -38,3 +38,7 @@ prometheus:
     endpoints:
       - # -- Port name for the Prometheus client service.
         port: prometheus-client
+
+grafana-operator:
+  # -- Overrides the name of the chart.
+  nameOverride: "circleci-server-monitoring"
