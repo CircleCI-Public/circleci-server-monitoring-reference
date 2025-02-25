@@ -8,6 +8,11 @@ executors:
     docker:
       - image: cimg/deploy:2025.01
     resource_class: medium
+  linux-vm:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: medium
+    shell: /bin/bash --login -i -eo pipefail
 
 workflows:
   main-workflow:
@@ -15,17 +20,14 @@ workflows:
       - lint
       - test
       - docs
+      - smoke-tests
 
 jobs:
   lint:
     executor: deploy
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-            helm dependency build
+      - run: helm dependency update
       - run:
           command: helm template --debug .
           when: always
@@ -58,6 +60,47 @@ jobs:
             else
               echo "No uncommitted changes detected."
             fi
+
+  smoke-tests:
+    executor: linux-vm
+    steps:
+      - run:
+          name: Install MicroK8s and Helm
+          command: |
+            sudo apt-get update && sudo apt install snapd -y
+            sudo snap install microk8s --classic --channel=1.32
+            sudo snap install helm --classic
+            sudo microk8s enable dns
+      - run: sudo microk8s status --wait-ready
+      - checkout
+      - run:
+          name: Set up kubectl and kubeconfig
+          command: |
+            echo "alias kubectl='sudo microk8s kubectl'" >> ~/.bashrc
+            mkdir -p ~/.kube
+            chmod 0700 ~/.kube
+            sudo microk8s kubectl config view --raw >"$HOME/.kube/config"
+      - run:
+          name: Install Helm chart
+          command: |
+            kubectl create ns circleci-server-monitoring
+            kubectl config set-context --current --namespace circleci-server-monitoring
+            helm dependency update
+            helm install circleci-server-monitoring-stack . --wait --timeout=2m -n circleci-server-monitoring
+      - run:
+         name: Wait for Prometheus
+         command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/prometheus --timeout=2m
+      - run:
+          name: Port-forward Prometheus
+          command: kubectl port-forward svc/prometheus 9090
+          background: true
+      - run:
+          name: Check Prometheus status
+          command: |
+            curl --retry 5 --retry-connrefused --retry-max-time 120 http://localhost:9090/api/v1/status/buildinfo
+      - run:
+          name: Check Grafana
+          command: echo "TODO"
 
 commands:
   notify_failing_main:
