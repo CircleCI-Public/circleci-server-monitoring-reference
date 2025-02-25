@@ -9,7 +9,7 @@ This repository is currently under active development and is not yet a supported
 
 A reference Helm chart for setting up a monitoring stack for CircleCI server
 
-![Prometheus UI showing Telegraf target as up](docs/images/prometheus-telegraf-targets.png)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square)
 
 ## Installing the Monitoring Stack
 
@@ -47,17 +47,17 @@ $ kubectl port-forward svc/prometheus 9090:9090 -n <your-namespace-here>
 
 Then visit http://localhost:9090/targets in your browser. Verify that Telegraf appears as a target and that its state is "up".
 
+![Prometheus UI showing Telegraf target as up](docs/images/prometheus-telegraf-targets.png)
+
 ### 4. Next Steps
 
 [TODO: Add next steps]
-
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square)
 
 ## Requirements
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 18.0.0 |
+| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 18.0.1 |
 
 ## Values
 
