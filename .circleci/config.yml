@@ -46,10 +46,9 @@ jobs:
       - run: ./do unit-tests
 
   docs:
-    executor: deploy
+    executor: linux-vm
     steps:
       - checkout
-      - setup_remote_docker
       - run: ./do helm-docs
       - run:
           name: Check for uncommitted helm-docs changes
