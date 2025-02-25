@@ -9,6 +9,8 @@ This repository is currently under active development and is not yet a supported
 
 A reference Helm chart for setting up a monitoring stack for CircleCI server
 
+![Prometheus UI showing Telegraf target as up](docs/images/prometheus-telegraf-targets.png)
+
 ## Installing the Monitoring Stack
 
 ### 1. Configure Server for the Monitoring Stack
@@ -44,8 +46,6 @@ $ kubectl port-forward svc/prometheus 9090:9090 -n <your-namespace-here>
 ```
 
 Then visit http://localhost:9090/targets in your browser. Verify that Telegraf appears as a target and that its state is "up".
-
-![Prometheus UI showing Telegraf target as up](docs/images/prometheus-telegraf-targets.png)
 
 ### 4. Next Steps
 
