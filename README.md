@@ -13,6 +13,13 @@ A reference Helm chart for setting up a monitoring stack for CircleCI server
 
 ## Installing the Monitoring Stack
 
+## Requirements
+
+| Repository | Name | Version |
+|------------|------|---------|
+| https://grafana.github.io/helm-charts | grafanaoperator(grafana-operator) | 5.16.0 |
+| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 18.0.1 |
+
 ### 1. Configure Server for the Monitoring Stack
 
 To set up monitoring for a CircleCI server instance, you need to configure Telegraf to set up a Prometheus client and expose a metrics endpoint. Add the following configuration to the CircleCI server Helm chart values:
@@ -31,7 +38,7 @@ telegraf:
 Install the Helm chart using the following command. This assumes you are installing it in the same namespace as your CircleCI server:
 
 ```bash
-$ helm install circleci-server-monitoring-stack . --wait -n <your-server-namespace>
+$ helm install circleci-server-monitoring-stack . --dependency-update --wait -n <your-server-namespace>
 ```
 
 > **_NOTE:_**  The `--wait` flag is important to ensure all dependencies are fully installed first.
@@ -53,17 +60,30 @@ Then visit http://localhost:9090/targets in your browser. Verify that Telegraf a
 
 [TODO: Add next steps]
 
-## Requirements
-
-| Repository | Name | Version |
-|------------|------|---------|
-| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 18.0.1 |
-
 ## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global.imagePullSecrets | list | `[]` | List of image pull secrets to be used across the deployment. |
+| global.fullnameOverride | string | `"server-monitoring"` | Override the full name for resources |
+| global.imagePullSecrets | list | `[]` | List of image pull secrets to be used across the deployment |
+| global.nameOverride | string | `""` | Override the release name |
+| grafana.credentials.adminPassword | string | `"admin"` | Grafana admin password. Change from default for production environments. |
+| grafana.credentials.adminUser | string | `"admin"` | Grafana admin username. |
+| grafana.credentials.existingSecretName | string | `""` | Name of an existing secret for Grafana credentials. Leave empty to create a new secret. |
+| grafana.dashboards[0] | object | `{"json":"{\n  \"title\": \"CircleCI API Usage Dashboard\",\n  \"timezone\": \"browser\",\n  \"refresh\": \"5s\",\n  \"panels\": [\n    {\n      \"type\": \"timeseries\",\n      \"title\": \"API v2 Requests Count Over Time\",\n      \"targets\": [\n        {\n          \"expr\": \"circle.http.request.count\"\n        }\n      ]\n    }\n  ],\n  \"time\": {\n    \"from\": \"now-6h\",\n    \"to\": \"now\"\n  }\n}\n","name":"circleci-api-usage-dashboard","resyncPeriod":"30s"}` | Sample dashboards for basic monitoring of a CircleCI server installation. |
+| grafana.datasource.jsonData.timeInterval | string | `"5s"` |  |
+| grafana.image.repository | string | `"grafana/grafana"` | Image repository for Grafana. |
+| grafana.image.tag | string | `"11.5.2"` | Tag for the Grafana image. |
+| grafana.persistence.accessModes | list | `["ReadWriteOnce"]` | Access modes for the persistent volume. |
+| grafana.persistence.enabled | bool | `false` | Enable persistent storage for Grafana. |
+| grafana.persistence.size | string | `"10Gi"` | Size of the persistent volume claim. |
+| grafana.persistence.storageClass | string | `""` | Storage class for persistent volume provisioner. |
+| grafana.replicas | int | `2` | Number of Grafana replicas to deploy. |
+| grafanaoperator | object | `{"fullnameOverride":"server-monitoring-grafana-operator","grafana":{"service":{"type":"ClusterIP"}},"image":{"repository":"quay.io/grafana-operator/grafana-operator","tag":"v5.16.0"}}` | https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
+| grafanaoperator.fullnameOverride | string | `"server-monitoring-grafana-operator"` | Overrides the fully qualified app name. |
+| grafanaoperator.grafana.service.type | string | `"ClusterIP"` | Use NodePort or LoadBalancer to expose Grafana publicly. |
+| grafanaoperator.image.repository | string | `"quay.io/grafana-operator/grafana-operator"` | Image repository for the Grafana Operator. |
+| grafanaoperator.image.tag | string | `"v5.16.0"` | Tag for the Grafana Operator image. |
 | prometheus.image.repository | string | `"quay.io/prometheus/prometheus"` | Image repository for Prometheus. |
 | prometheus.image.tag | string | `"v3.2.0"` | Tag for the Prometheus image. |
 | prometheus.replicas | int | `2` | Number of Prometheus replicas to deploy. |

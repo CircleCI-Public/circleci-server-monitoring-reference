@@ -1,0 +1,69 @@
+{{- $name := include "server-monitoring.fullname" . -}}
+{{- $imagePullSecrets := .Values.global.imagePullSecrets -}}
+{{- with .Values.grafana }}
+{{- $credentialSecretName := (or .credentials.existingSecretName (printf "%s-grafana-credentials" $name)) -}}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: {{ $name }}-grafana
+  labels:
+    app: {{ $name }}
+    dashboards: "grafana"
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  {{- if .persistence.enabled }}
+  persistentVolumeClaim:
+    spec:
+      accessModes: {{ toYaml .persistence.accessModes | nindent 6 }}
+      resources:
+        requests:
+          storage: {{ .persistence.size }}
+      {{- if .persistence.storageClass }}
+      storageClassName: {{ .persistence.storageClass | quote }}
+      {{- end }}
+  {{- end }}
+  deployment:
+    spec:
+      replicas: {{ .replicas }}
+      template:
+        spec:
+          {{- if $imagePullSecrets }}
+          imagePullSecrets:
+            {{- range $imagePullSecrets }}
+            - name: {{ . }}
+            {{- end }}
+          {{- end }}
+          containers:
+            - name: grafana
+              image: "{{ .image.repository }}:{{ .image.tag }}"
+              {{- if .persistence.enabled }}
+              volumeMounts:
+                - name: grafana-data
+                  mountPath: /var/lib/grafana
+              {{- end }}
+              env:
+                {{- with .credentials }}
+                - name: GF_SECURITY_ADMIN_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: GF_SECURITY_ADMIN_USER
+                      name: {{ $credentialSecretName }}
+                - name: GF_SECURITY_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: GF_SECURITY_ADMIN_PASSWORD
+                      name: {{ $credentialSecretName }}
+                {{- end }}
+          {{- if .persistence.enabled }}
+          volumes:
+            - name: grafana-data
+              persistentVolumeClaim:
+                claimName: {{ $name }}-grafana-pvc
+          {{- end }}
+  config:
+    log:
+      mode: "console"
+    auth:
+      disable_login_form: "false"
+{{- end }}

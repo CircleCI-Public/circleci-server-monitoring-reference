@@ -1,6 +1,10 @@
 global:
-  # -- List of image pull secrets to be used across the deployment.
+  # -- List of image pull secrets to be used across the deployment
   imagePullSecrets: []
+  # -- Override the release name
+  nameOverride: ""
+  # -- Override the full name for resources
+  fullnameOverride: "server-monitoring"
 
 prometheusOperator:
   # -- Number of Prometheus Operator replicas to deploy.
@@ -39,6 +43,75 @@ prometheus:
       - # -- Port name for the Prometheus client service.
         port: prometheus-client
 
-grafana-operator:
-  # -- Overrides the name of the chart.
-  nameOverride: "circleci-server-monitoring"
+# -- Full values for the Grafana Operator chart can be obtained at:
+# -- https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml
+grafanaoperator:
+  # -- Overrides the fully qualified app name.
+  fullnameOverride: "server-monitoring-grafana-operator"
+  image:
+    # -- Image repository for the Grafana Operator.
+    repository: quay.io/grafana-operator/grafana-operator
+    # -- Tag for the Grafana Operator image.
+    tag: v5.16.0
+  grafana:
+    service:
+      # -- The service type for Grafana (e.g., ClusterIP, NodePort, or LoadBalancer).
+      # -- Use NodePort or LoadBalancer to expose Grafana publicly.
+      type: ClusterIP
+
+grafana:
+  # -- Number of Grafana replicas to deploy.
+  replicas: 2
+  image:
+    # -- Image repository for Grafana.
+    repository: grafana/grafana
+    # -- Tag for the Grafana image.
+    tag: 11.5.2
+  credentials:
+    # -- Name of an existing secret for Grafana credentials. Leave empty to create a new secret.
+    existingSecretName: ""
+    # -- Grafana admin username.
+    adminUser: "admin"
+    # -- Grafana admin password. Change from default for production environments.
+    adminPassword: "admin"
+  persistence:
+    # -- Enable persistent storage for Grafana.
+    enabled: false
+    # -- Access modes for the persistent volume.
+    accessModes:
+      - ReadWriteOnce
+    # -- Size of the persistent volume claim.
+    size: 10Gi
+    # -- Storage class for persistent volume provisioner.
+    storageClass: ""
+  datasource:
+    jsonData:
+      #-- The time interval for Grafana to poll Prometheus.
+      #-- Specifies the frequency of data requests.
+      timeInterval: 5s
+  dashboards:
+    # -- Sample dashboards for basic monitoring of a CircleCI server installation.
+    - name: "circleci-api-usage-dashboard"
+      resyncPeriod: 30s
+      json: |
+        {
+          "title": "CircleCI API Usage Dashboard",
+          "timezone": "browser",
+          "refresh": "5s",
+          "panels": [
+            {
+              "type": "timeseries",
+              "title": "API v2 Requests Count Over Time",
+              "targets": [
+                {
+                  "expr": "circle.http.request.count"
+                }
+              ]
+            }
+          ],
+          "time": {
+            "from": "now-6h",
+            "to": "now"
+          }
+        }
+    # TODO: Add more dashboards in ticket ONPREM-1864
