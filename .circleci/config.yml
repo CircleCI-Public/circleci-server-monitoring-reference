@@ -12,7 +12,7 @@ executors:
     machine:
       image: ubuntu-2204:current
     resource_class: medium
-    shell: /bin/bash --login -i -eo pipefail
+    shell: /bin/bash -i -eo pipefail
 
 workflows:
   main-workflow:
@@ -108,14 +108,13 @@ jobs:
           name: Check Grafana's Prometheus data source is healthy
           command: |
             id=$(curl --retry 5 --retry-connrefused -s -u admin:admin "http://localhost:3000/api/datasources/id/Prometheus" | jq -r '.id')
-            status=$(curl -s -u admin:admin "http://localhost:3000/api/datasources/${id}/health" | jq -r '.status')
-
-            if [ "${status}" == "OK" ]; then
-              echo "Prometheus data source is healthy."
-            else
-              echo "Prometheus data source is not healthy: ${status}"
-              exit 1
-            fi
+            for i in {1..5}; do
+              status=$(curl -s -u admin:admin "http://localhost:3000/api/datasources/${id}/health" | jq -r '.status')
+              [ "${status}" == "OK" ] && echo "Prometheus data source is healthy." && exit 0
+              sleep 10
+            done
+            echo "Prometheus data source is not healthy: ${status}"
+            exit 1
 
 commands:
   notify_failing_main:
