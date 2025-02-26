@@ -26,6 +26,9 @@ spec:
       replicas: {{ .replicas }}
       template:
         spec:
+          securityContext:
+            runAsUser: 472
+            fsGroup: 472
           {{- if $imagePullSecrets }}
           imagePullSecrets:
             {{- range $imagePullSecrets }}
