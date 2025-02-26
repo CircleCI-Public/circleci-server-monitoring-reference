@@ -7,6 +7,9 @@ metadata:
   name: {{ $name }}-grafana-pvc
   labels:
     app: {{ $name }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/resource-policy": "keep"
 spec:
   accessModes:
     {{- toYaml .accessModes | nindent 2 }}
