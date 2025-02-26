@@ -98,8 +98,24 @@ jobs:
           command: |
             curl --retry 5 --retry-connrefused --retry-max-time 120 http://localhost:9090/api/v1/status/buildinfo
       - run:
-          name: Check Grafana
-          command: echo "TODO"
+          name: Wait for Grafana
+          command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/server-monitoring-grafana-service --timeout=2m
+      - run:
+          name: Port-forward Grafana
+          command: kubectl port-forward svc/server-monitoring-grafana-service 3000
+          background: true
+      - run:
+          name: Check Grafana's Prometheus data source is healthy
+          command: |
+            id=$(curl --retry 5 --retry-connrefused -s -u admin:admin "http://localhost:3000/api/datasources/id/Prometheus" | jq -r '.id')
+            status=$(curl -s -u admin:admin "http://localhost:3000/api/datasources/${id}/health" | jq -r '.status')
+
+            if [ "${status}" == "OK" ]; then
+              echo "Prometheus data source is healthy."
+            else
+              echo "Prometheus data source is not healthy: ${status}"
+              exit 1
+            fi
 
 commands:
   notify_failing_main:
