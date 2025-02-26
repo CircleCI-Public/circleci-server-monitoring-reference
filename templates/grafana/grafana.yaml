@@ -9,8 +9,6 @@ metadata:
   labels:
     app: {{ $name }}
     dashboards: "grafana"
-  annotations:
-    "helm.sh/hook": post-install,post-upgrade
 spec:
   {{- if .persistence.enabled }}
   persistentVolumeClaim:

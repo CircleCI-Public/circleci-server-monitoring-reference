@@ -3,8 +3,6 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 metadata:
   name: {{ $name }}-prometheus-datasource
-  annotations:
-    "helm.sh/hook": post-install,post-upgrade
 spec:
   datasource:
     access: proxy
