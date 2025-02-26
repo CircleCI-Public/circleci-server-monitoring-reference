@@ -41,7 +41,7 @@ tests:
         documentIndex: 0
       - equal:
           path: spec.instanceSelector.matchLabels.dashboards
-          value: server-monitoring
+          value: grafana
         documentIndex: 0
       - matchRegex:
           path: spec.json
@@ -62,7 +62,7 @@ tests:
         documentIndex: 1
       - equal:
           path: spec.instanceSelector.matchLabels.dashboards
-          value: server-monitoring
+          value: grafana
         documentIndex: 1
       - matchRegex:
           path: spec.json

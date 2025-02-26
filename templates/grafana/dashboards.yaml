@@ -10,7 +10,7 @@ spec:
   resyncPeriod: {{ .resyncPeriod }}
   instanceSelector:
     matchLabels:
-      dashboards: "{{ $name }}"
+      dashboards: grafana
   json: |
     {{ .json | nindent 4 }}
 ---
