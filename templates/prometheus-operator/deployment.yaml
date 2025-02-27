@@ -9,8 +9,6 @@ metadata:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
     app.kubernetes.io/version: {{ $tag }}
-  annotations:
-    "helm.sh/hook": post-install,post-upgrade
   name: {{ $name}}-prometheus-operator
 spec:
   replicas: {{ .Values.prometheusOperator.replicas }}

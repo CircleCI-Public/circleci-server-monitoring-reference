@@ -7,8 +7,7 @@ global:
   fullnameOverride: "server-monitoring"
 
 prometheusOperatorCRDs:
-  # -- Enables the deployment of CRDs required by Prometheus Operator.
-  enabled: true
+  install: false
 
 prometheusOperator:
   # -- Number of Prometheus Operator replicas to deploy.

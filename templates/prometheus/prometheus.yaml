@@ -8,8 +8,6 @@ metadata:
   name: {{ $name }}-prometheus
   labels:
     app: {{ $name }}-prometheus
-  annotations:
-    "helm.sh/hook": post-install,post-upgrade
 spec:
   {{- with .Values.global.imagePullSecrets }}
   imagePullSecrets:

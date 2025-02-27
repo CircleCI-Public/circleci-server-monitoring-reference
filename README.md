@@ -34,19 +34,28 @@ telegraf:
           listen: ":9273"
 ```
 
-### 2. Install the Helm Chart
+### 2. Install the CRDs
+
+Before installing the Prometheus operator, you must first install the Custom Resource Definitions (CRDs) required by it. Follow these steps:
+
+```bash
+$ VERSION=$(helm dependency list | grep prometheus-operator-crds | cut -f 2)
+$ helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+$ helm repo update
+$ helm install prometheus-operator-crds prometheus-community/prometheus-operator-crds --version "${VERSION}"
+```
+
+### 3. Install the Helm Chart
 
 Install the Helm chart using the following command. This assumes you are installing it in the same namespace as your CircleCI server:
 
 ```bash
-$ helm install circleci-server-monitoring-stack . --dependency-update --wait -n <your-server-namespace>
+$ helm install circleci-server-monitoring-stack . --dependency-update -n <your-server-namespace>
 ```
-
-> **_NOTE:_**  The `--wait` flag is important to ensure all dependencies are fully installed first.
 
 > **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
 
-### 3. Verify Prometheus Is Up and Targeting Telegraf
+### 4. Verify Prometheus Is Up and Targeting Telegraf
 To verify that Prometheus is working correctly and targeting Telegraf, use the following command to port-forward Prometheus:
 
 ```bash
@@ -57,7 +66,7 @@ Then visit http://localhost:9090/targets in your browser. Verify that Telegraf a
 
 ![Prometheus UI showing Telegraf target as up](docs/images/prometheus-telegraf-targets.png)
 
-### 4. Next Steps
+### 5. Next Steps
 
 [TODO: Add next steps]
 
@@ -100,4 +109,4 @@ Then visit http://localhost:9090/targets in your browser. Verify that Telegraf a
 | prometheusOperator.prometheusConfigReloader.image.repository | string | `"quay.io/prometheus-operator/prometheus-config-reloader"` | Image repository for Prometheus Config Reloader. |
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.80.1"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
-| prometheusOperatorCRDs.enabled | bool | `true` | Enables the deployment of CRDs required by Prometheus Operator. |
+| prometheusOperatorCRDs.install | bool | `false` |  |

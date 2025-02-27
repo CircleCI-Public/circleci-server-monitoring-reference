@@ -80,12 +80,21 @@ jobs:
             chmod 0700 ~/.kube
             sudo microk8s kubectl config view --raw >"$HOME/.kube/config"
       - run:
-          name: Install Helm chart
+          name: Create namespace
           command: |
             kubectl create ns circleci-server-monitoring
             kubectl config set-context --current --namespace circleci-server-monitoring
+      - run:
+          name: Install chart dependencies
+          command: |
+            VERSION=$(helm dependency list | grep prometheus-operator-crds | cut -f 2)
+            helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+            helm repo update
+            helm install prometheus-operator-crds prometheus-community/prometheus-operator-crds --version "${VERSION}"
             helm dependency update
-            helm install circleci-server-monitoring-stack . --wait --timeout=2m -n circleci-server-monitoring
+      - run:
+          name: Install Helm chart
+          command: helm install circleci-server-monitoring-stack . --wait --timeout=2m -n circleci-server-monitoring
       - run:
           name: Watch Pods
           command: kubectl get pods -w
@@ -127,7 +136,9 @@ jobs:
           when: on_fail
       - run:
           name: Uninstall Helm chart
-          command: helm uninstall circleci-server-monitoring-stack -n circleci-server-monitoring
+          command: |
+            helm uninstall circleci-server-monitoring-stack -n circleci-server-monitoring
+            helm uninstall prometheus-operator-crds -n circleci-server-monitoring
 
 commands:
   notify_failing_main:
