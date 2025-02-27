@@ -1,4 +1,0 @@
-grafana:
-  persistence:
-    enabled: true
-    storageClass: "custom"
