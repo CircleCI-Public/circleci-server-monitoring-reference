@@ -107,10 +107,12 @@ jobs:
       - run:
           name: Check Grafana's Prometheus data source is healthy
           command: |
-            for i in {1..5}; do
+            for i in {1..30}; do
               id=$(curl --retry 5 --retry-connrefused -s -u admin:admin "http://localhost:3000/api/datasources/id/Prometheus" | jq -r '.id')
+              echo "Got ID ${id} for Prometheus. Checking status:"
               status=$(curl -s -u admin:admin "http://localhost:3000/api/datasources/${id}/health" | jq -r '.status')
               [ "${status}" == "OK" ] && echo "Prometheus data source is healthy." && exit 0
+              echo "Got status ${status}. Retrying..."
               sleep 10
             done
             echo "Prometheus data source is not healthy: ${status}"
