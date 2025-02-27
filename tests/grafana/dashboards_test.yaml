@@ -1,0 +1,70 @@
+suite: test grafana dashboards
+templates:
+  - grafana/dashboards.yaml
+
+tests:
+  - it: should create grafana dashboards
+    set:
+      grafana.dashboards:
+        - name: example-dashboard
+          resyncPeriod: 5m
+          json: |
+            {
+              "title": "Example Dashboard",
+              "time": {
+                "from": "now-6h",
+                "to": "now"
+              }
+            }
+        - name: another-dashboard
+          resyncPeriod: 10m
+          json: |
+            {
+              "title": "Another Dashboard",
+              "time": {
+                "from": "now-12h",
+                "to": "now"
+              }
+            }
+    asserts:
+      # First Dashboard
+      - isKind:
+          of: GrafanaDashboard
+        documentIndex: 0
+      - equal:
+          path: metadata.name
+          value: server-monitoring-example-dashboard
+        documentIndex: 0
+      - equal:
+          path: spec.resyncPeriod
+          value: 5m
+        documentIndex: 0
+      - equal:
+          path: spec.instanceSelector.matchLabels.dashboards
+          value: grafana
+        documentIndex: 0
+      - matchRegex:
+          path: spec.json
+          pattern: '"title":\s*"Example Dashboard"'
+        documentIndex: 0
+
+      # Second Dashboard
+      - isKind:
+          of: GrafanaDashboard
+        documentIndex: 1
+      - equal:
+          path: metadata.name
+          value: server-monitoring-another-dashboard
+        documentIndex: 1
+      - equal:
+          path: spec.resyncPeriod
+          value: 10m
+        documentIndex: 1
+      - equal:
+          path: spec.instanceSelector.matchLabels.dashboards
+          value: grafana
+        documentIndex: 1
+      - matchRegex:
+          path: spec.json
+          pattern: '"title":\s*"Another Dashboard"'
+        documentIndex: 1

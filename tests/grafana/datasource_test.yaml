@@ -1,0 +1,35 @@
+suite: test grafana datasource
+templates:
+  - grafana/datasource.yaml
+
+tests:
+  - it: should create a prometheus datasource
+    set:
+      grafana.datasource.jsonData.timeInterval: "30s"
+    asserts:
+      - isKind:
+          of: GrafanaDatasource
+      - equal:
+          path: metadata.name
+          value: server-monitoring-prometheus-datasource
+      - equal:
+          path: spec.datasource.access
+          value: proxy
+      - equal:
+          path: spec.datasource.type
+          value: prometheus
+      - equal:
+          path: spec.datasource.jsonData.timeInterval
+          value: "30s"
+      - equal:
+          path: spec.datasource.jsonData.tlsSkipVerify
+          value: true
+      - equal:
+          path: spec.datasource.name
+          value: Prometheus
+      - equal:
+          path: spec.datasource.url
+          value: http://prometheus:9090
+      - equal:
+          path: spec.instanceSelector.matchLabels.dashboards
+          value: grafana

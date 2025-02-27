@@ -12,9 +12,11 @@ This repository is currently under active development and is not yet a supported
 
 ## Installing the Monitoring Stack
 
+{{ template "chart.requirementsSection" . }}
+
 ### 1. Configure Server for the Monitoring Stack
 
-To set up monitoring for a CircleCI server instance, you need to configure Telegraf to set up a Prometheus client and expose a metrics endpoint. Add the following configuration to the CircleCI server Helm chart values:
+To set up monitoring for a CircleCI server instance, you need to configure Telegraf to set up a Prometheus client and expose a metrics endpoint. Add the following configuration to the CircleCI **server** Helm chart values:
 
 ```yaml
 telegraf:
@@ -27,10 +29,11 @@ telegraf:
 ```
 
 ### 2. Install the Helm Chart
+
 Install the Helm chart using the following command. This assumes you are installing it in the same namespace as your CircleCI server:
 
 ```bash
-$ helm install {{ template "chart.name" . }} . --wait -n <your-server-namespace>
+$ helm install {{ template "chart.name" . }} . --dependency-update --wait -n <your-server-namespace>
 ```
 
 > **_NOTE:_**  The `--wait` flag is important to ensure all dependencies are fully installed first.
@@ -51,7 +54,5 @@ Then visit http://localhost:9090/targets in your browser. Verify that Telegraf a
 ### 4. Next Steps
 
 [TODO: Add next steps]
-
-{{ template "chart.requirementsSection" . }}
 
 {{ template "chart.valuesSection" . }}

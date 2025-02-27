@@ -1,0 +1,55 @@
+suite: test grafana
+templates:
+  - grafana/grafana.yaml
+
+tests:
+  - it: should set grafana replicas
+    set:
+      grafana.replicas: 2
+    asserts:
+      - isKind:
+          of: Grafana
+      - equal:
+          path: spec.deployment.spec.replicas
+          value: 2
+
+  - it: should set grafana image
+    set:
+      grafana.image.repository: myregistry.io/grafana
+      grafana.image.tag: 1.2.3
+    asserts:
+      - equal:
+          path: spec.deployment.spec.template.spec.containers[0].image
+          value: myregistry.io/grafana:1.2.3
+
+  - it: should configure persistence
+    set:
+      grafana.persistence.enabled: true
+      grafana.persistence.size: 11Gi
+      grafana.persistence.storageClass: custom-storage
+    asserts:
+      - equal:
+          path: spec.persistentVolumeClaim.spec.resources.requests.storage
+          value: 11Gi
+      - equal:
+          path: spec.persistentVolumeClaim.spec.storageClassName
+          value: "custom-storage"
+
+  - it: should set image pull secrets for grafana
+    set:
+      global.imagePullSecrets: [grafana-regcred]
+    asserts:
+      - equal:
+          path: spec.deployment.spec.template.spec.imagePullSecrets[0].name
+          value: grafana-regcred
+
+  - it: should configure grafana credentials
+    set:
+      grafana.credentials.existingSecretName: custom-grafana-credentials
+    asserts:
+      - equal:
+          path: spec.deployment.spec.template.spec.containers[0].env[0].valueFrom.secretKeyRef.name
+          value: custom-grafana-credentials
+      - equal:
+          path: spec.deployment.spec.template.spec.containers[0].env[1].valueFrom.secretKeyRef.name
+          value: custom-grafana-credentials

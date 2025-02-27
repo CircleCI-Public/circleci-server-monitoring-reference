@@ -1,0 +1,15 @@
+{{- $name := include "server-monitoring.fullname" . -}}
+{{- range .Values.grafana.dashboards }}
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: {{ $name }}-{{ .name }}
+spec:
+  resyncPeriod: {{ .resyncPeriod }}
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  json: |
+    {{ .json | nindent 4 }}
+---
+{{- end }}

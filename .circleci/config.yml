@@ -12,7 +12,7 @@ executors:
     machine:
       image: ubuntu-2204:current
     resource_class: medium
-    shell: /bin/bash --login -i -eo pipefail
+    shell: /bin/bash -i -eo pipefail
 
 workflows:
   main-workflow:
@@ -87,6 +87,10 @@ jobs:
             helm dependency update
             helm install circleci-server-monitoring-stack . --wait --timeout=2m -n circleci-server-monitoring
       - run:
+          name: Watch Pods
+          command: kubectl get pods -w
+          background: true
+      - run:
          name: Wait for Prometheus
          command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/prometheus --timeout=2m
       - run:
@@ -98,8 +102,32 @@ jobs:
           command: |
             curl --retry 5 --retry-connrefused --retry-max-time 120 http://localhost:9090/api/v1/status/buildinfo
       - run:
-          name: Check Grafana
-          command: echo "TODO"
+          name: Wait for Grafana
+          command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/server-monitoring-grafana-service --timeout=2m
+      - run:
+          name: Port-forward Grafana
+          command: kubectl port-forward svc/server-monitoring-grafana-service 3000
+          background: true
+      - run:
+          name: Check Grafana's Prometheus data source is healthy
+          command: |
+            for i in {1..30}; do
+              id=$(curl --retry 5 --retry-connrefused -s -u admin:admin "http://localhost:3000/api/datasources/id/Prometheus" | jq -r '.id')
+              echo "Got ID ${id} for Prometheus. Checking status:"
+              status=$(curl -s -u admin:admin "http://localhost:3000/api/datasources/${id}/health" | jq -r '.status')
+              [ "${status}" == "OK" ] && echo "Prometheus data source is healthy." && exit 0
+              echo "Got status ${status}. Retrying..."
+              sleep 10
+            done
+            echo "Prometheus data source is not healthy: ${status}"
+            exit 1
+      - run:
+          name: Describe Pods on failure
+          command: kubectl describe pods & exit 1
+          when: on_fail
+      - run:
+          name: Uninstall Helm chart
+          command: helm uninstall circleci-server-monitoring-stack -n circleci-server-monitoring
 
 commands:
   notify_failing_main:
