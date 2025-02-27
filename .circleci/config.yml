@@ -87,6 +87,10 @@ jobs:
             helm dependency update
             helm install circleci-server-monitoring-stack . --wait --timeout=2m -n circleci-server-monitoring
       - run:
+          name: Watch Pods
+          command: kubectl get pods -w
+          background: true
+      - run:
          name: Wait for Prometheus
          command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/prometheus --timeout=2m
       - run:
@@ -117,6 +121,13 @@ jobs:
             done
             echo "Prometheus data source is not healthy: ${status}"
             exit 1
+      - run:
+          name: Describe Pods on failure
+          command: kubectl describe pods & exit 1
+          when: on_fail
+      - run:
+          name: Uninstall Helm chart
+          command: helm uninstall circleci-server-monitoring-stack -n circleci-server-monitoring
 
 commands:
   notify_failing_main:
