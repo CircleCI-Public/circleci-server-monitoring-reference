@@ -1,9 +1,11 @@
+{{- $name := include "server-monitoring.fullname" . -}}
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus
+  name: {{ $name }}-prometheus
   labels:
-    app: prometheus
+    app: {{ $name }}-prometheus
 spec:
   ports:
     - name: web

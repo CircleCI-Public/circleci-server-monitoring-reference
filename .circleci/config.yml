@@ -92,10 +92,10 @@ jobs:
           background: true
       - run:
          name: Wait for Prometheus
-         command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/prometheus --timeout=2m
+         command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/server-monitoring-prometheus --timeout=2m
       - run:
           name: Port-forward Prometheus
-          command: kubectl port-forward svc/prometheus 9090
+          command: kubectl port-forward svc/server-monitoring-prometheus 9090
           background: true
       - run:
           name: Check Prometheus status

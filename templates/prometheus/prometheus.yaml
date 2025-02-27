@@ -1,12 +1,13 @@
+{{- $name := include "server-monitoring.fullname" . -}}
 {{- $repository := .Values.prometheus.image.repository -}}
 {{- $tag := .Values.prometheus.image.tag -}}
 
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
-  name: prometheus
+  name: {{ $name }}-prometheus
   labels:
-    app: prometheus
+    app: {{ $name }}-prometheus
   annotations:
     "helm.sh/hook": post-install,post-upgrade
 spec:
@@ -27,6 +28,6 @@ spec:
     fsGroup: 2000
     runAsNonRoot: true
     runAsUser: 1000
-  serviceAccountName: prometheus
+  serviceAccountName: {{ $name }}-prometheus
   version: {{ $tag }}
   serviceMonitorSelector: {}

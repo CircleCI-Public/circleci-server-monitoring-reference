@@ -11,7 +11,7 @@ spec:
       timeInterval: {{ .Values.grafana.datasource.jsonData.timeInterval }}
       tlsSkipVerify: true
     name: Prometheus
-    url: http://prometheus:9090
+    url: http://{{ $name }}-prometheus:9090
   instanceSelector:
     matchLabels:
       dashboards: grafana
