@@ -31,20 +31,20 @@ prometheus:
     tag: v3.2.0
   serviceMonitor:
     # -- Labels to select ServiceMonitors for scraping metrics.
-    # -- By default, it's configured to scrape the existing Telegraf deployment in CircleCI server.
+    # By default, it's configured to scrape the existing Telegraf deployment in CircleCI server.
     selectorLabels:
       app.kubernetes.io/instance: circleci-server
       app.kubernetes.io/name: telegraf
     # -- Namespaces to look for ServiceMonitor objects. Set this if the CircleCI
-    # -- server monitoring stack is deploying in a different namespace than the
-    # -- actual CircleCI server installation.
+    # server monitoring stack is deploying in a different namespace than the
+    # actual CircleCI server installation.
     selectorNamespaces: []
     endpoints:
       - # -- Port name for the Prometheus client service.
         port: prometheus-client
 
 # -- Full values for the Grafana Operator chart can be obtained at:
-# -- https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml
+# https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml
 grafanaoperator:
   # -- Overrides the fully qualified app name.
   fullnameOverride: "server-monitoring-grafana-operator"
@@ -55,8 +55,10 @@ grafanaoperator:
     tag: v5.16.0
   grafana:
     service:
-      # -- The service type for Grafana (e.g., ClusterIP, NodePort, or LoadBalancer).
-      # -- Use NodePort or LoadBalancer to expose Grafana publicly.
+      # -- Specifies the type of service for Grafana. Options include ClusterIP,
+      # NodePort, or LoadBalancer. Use NodePort or LoadBalancer to expose
+      # Grafana externally. Ensure that grafana.credentials are set for
+      # security purposes.
       type: ClusterIP
 
 grafana:
@@ -82,12 +84,14 @@ grafana:
       - ReadWriteOnce
     # -- Size of the persistent volume claim.
     size: 10Gi
-    # -- Storage class for persistent volume provisioner.
+    # -- Storage class for persistent volume provisioner. You can create a custom
+    # storage class with a "retain" policy to ensure the persistent volume
+    # remains even after the chart is uninstalled.
     storageClass: ""
   datasource:
     jsonData:
-      #-- The time interval for Grafana to poll Prometheus.
-      #-- Specifies the frequency of data requests.
+      # -- The time interval for Grafana to poll Prometheus.
+      # Specifies the frequency of data requests.
       timeInterval: 5s
   dashboards:
     # -- Sample dashboards for basic monitoring of a CircleCI server installation.
