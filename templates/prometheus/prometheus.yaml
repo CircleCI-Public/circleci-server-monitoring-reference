@@ -31,3 +31,17 @@ spec:
   serviceAccountName: {{ $name }}-prometheus
   version: {{ $tag }}
   serviceMonitorSelector: {}
+  {{- with .Values.prometheus.persistence }}
+  {{- if .enabled }}
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: {{ .accessModes | toJson }}
+        resources:
+          requests:
+            storage: {{ .size }}
+        {{- if .storageClass }}
+        storageClassName: {{ .storageClass }}
+        {{- end }}
+  {{- end }}
+  {{- end }}

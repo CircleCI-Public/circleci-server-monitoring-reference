@@ -5,5 +5,5 @@ dependencies:
 - name: grafana-operator
   repository: https://grafana.github.io/helm-charts
   version: v5.16.0
-digest: sha256:e5f57ab3beb90eb5c109c38c6d6f0a5bcbdcd103a788eeaa0559ff1745eac784
-generated: "2025-02-26T08:24:44.600682027-04:00"
+digest: sha256:a508194fb3751bbaae0ffcae15440affaee37bbc464aff45d61e231e673a7d60
+generated: "2025-02-27T14:44:00.538261262-04:00"

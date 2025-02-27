@@ -87,6 +87,10 @@ Then visit http://localhost:9090/targets in your browser. Verify that Telegraf a
 | grafanaoperator.image.tag | string | `"v5.16.0"` | Tag for the Grafana Operator image. |
 | prometheus.image.repository | string | `"quay.io/prometheus/prometheus"` | Image repository for Prometheus. |
 | prometheus.image.tag | string | `"v3.2.0"` | Tag for the Prometheus image. |
+| prometheus.persistence.accessModes | list | `["ReadWriteOnce"]` | Access modes for the persistent volume. |
+| prometheus.persistence.enabled | bool | `false` | Enable persistent storage for Prometheus. |
+| prometheus.persistence.size | string | `"10Gi"` | Size of the persistent volume claim. |
+| prometheus.persistence.storageClass | string | `""` | Storage class for persistent volume provisioner. You can create a custom storage class with a "retain" policy to ensure the persistent volume remains even after the chart is uninstalled. |
 | prometheus.replicas | int | `2` | Number of Prometheus replicas to deploy. |
 | prometheus.serviceMonitor.endpoints[0].port | string | `"prometheus-client"` | Port name for the Prometheus client service. |
 | prometheus.serviceMonitor.selectorLabels | object | `{"app.kubernetes.io/instance":"circleci-server","app.kubernetes.io/name":"telegraf"}` | Labels to select ServiceMonitors for scraping metrics. By default, it's configured to scrape the existing Telegraf deployment in CircleCI server. |
@@ -96,3 +100,4 @@ Then visit http://localhost:9090/targets in your browser. Verify that Telegraf a
 | prometheusOperator.prometheusConfigReloader.image.repository | string | `"quay.io/prometheus-operator/prometheus-config-reloader"` | Image repository for Prometheus Config Reloader. |
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.80.1"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
+| prometheusOperatorCRDs.enabled | bool | `true` | Enables the deployment of CRDs required by Prometheus Operator. |
