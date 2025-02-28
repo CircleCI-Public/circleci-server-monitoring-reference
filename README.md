@@ -17,8 +17,8 @@ A reference Helm chart for setting up a monitoring stack for CircleCI server
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://grafana.github.io/helm-charts | grafanaoperator(grafana-operator) | 5.16.0 |
-| https://prometheus-community.github.io/helm-charts | prometheus-operator-crds | 18.0.1 |
+| https://grafana.github.io/helm-charts | grafanaoperator(grafana-operator) | 5.16.* |
+| https://prometheus-community.github.io/helm-charts | prometheusOperator(prometheus-operator-crds) | 18.0.* |
 
 ### 1. Configure Server for the Monitoring Stack
 
@@ -34,21 +34,20 @@ telegraf:
           listen: ":9273"
 ```
 
-### 2. Install the CRDs
+### 2. Install Dependencies
 
-Before installing the Prometheus operator, you must first install the Custom Resource Definitions (CRDs) required by it. Follow these steps:
+Before installing the full chart, you must first install the dependency subcharts, including the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
-$ helm dependency update
-$ helm install prometheus-operator-crds ./charts/prometheus-operator-crds-*.tgz
+$ helm install circleci-server-monitoring-stack . --dependency-update --set global.enabled=false --set prometheusOperator.installCRDs=true -n <your-server-namespace>
 ```
 
 ### 3. Install the Helm Chart
 
-Install the Helm chart using the following command. This assumes you are installing it in the same namespace as your CircleCI server:
+Next, install the Helm chart using the following command:
 
 ```bash
-$ helm install circleci-server-monitoring-stack . -n <your-server-namespace>
+$ helm upgrade --install circleci-server-monitoring-stack . --reset-values -n <your-server-namespace>
 ```
 
 > **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
@@ -72,6 +71,7 @@ Then visit http://localhost:9090/targets in your browser. Verify that Telegraf a
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| global.enabled | bool | `true` |  |
 | global.fullnameOverride | string | `"server-monitoring"` | Override the full name for resources |
 | global.imagePullSecrets | list | `[]` | List of image pull secrets to be used across the deployment |
 | global.nameOverride | string | `""` | Override the release name |
@@ -80,6 +80,7 @@ Then visit http://localhost:9090/targets in your browser. Verify that Telegraf a
 | grafana.credentials.existingSecretName | string | `""` | Name of an existing secret for Grafana credentials. Leave empty to create a new secret. |
 | grafana.dashboards[0] | object | `{"json":"{\n  \"title\": \"CircleCI API Usage Dashboard\",\n  \"timezone\": \"browser\",\n  \"refresh\": \"5s\",\n  \"panels\": [\n    {\n      \"type\": \"timeseries\",\n      \"title\": \"API v2 Requests Count Over Time\",\n      \"targets\": [\n        {\n          \"expr\": \"circle.http.request.count\"\n        }\n      ]\n    }\n  ],\n  \"time\": {\n    \"from\": \"now-6h\",\n    \"to\": \"now\"\n  }\n}\n","name":"circleci-api-usage-dashboard","resyncPeriod":"30s"}` | Sample dashboards for basic monitoring of a CircleCI server installation. |
 | grafana.datasource.jsonData.timeInterval | string | `"5s"` | The time interval for Grafana to poll Prometheus. Specifies the frequency of data requests. |
+| grafana.enabled | string | `"-"` |  |
 | grafana.image.repository | string | `"grafana/grafana"` | Image repository for Grafana. |
 | grafana.image.tag | string | `"11.5.2"` | Tag for the Grafana image. |
 | grafana.persistence.accessModes | list | `["ReadWriteOnce"]` | Access modes for the persistent volume. |
@@ -92,6 +93,7 @@ Then visit http://localhost:9090/targets in your browser. Verify that Telegraf a
 | grafanaoperator.grafana.service.type | string | `"ClusterIP"` | Specifies the type of service for Grafana. Options include ClusterIP, NodePort, or LoadBalancer. Use NodePort or LoadBalancer to expose Grafana externally. Ensure that grafana.credentials are set for security purposes. |
 | grafanaoperator.image.repository | string | `"quay.io/grafana-operator/grafana-operator"` | Image repository for the Grafana Operator. |
 | grafanaoperator.image.tag | string | `"v5.16.0"` | Tag for the Grafana Operator image. |
+| prometheus.enabled | string | `"-"` |  |
 | prometheus.image.repository | string | `"quay.io/prometheus/prometheus"` | Image repository for Prometheus. |
 | prometheus.image.tag | string | `"v3.2.0"` | Tag for the Prometheus image. |
 | prometheus.persistence.accessModes | list | `["ReadWriteOnce"]` | Access modes for the persistent volume. |
@@ -102,9 +104,11 @@ Then visit http://localhost:9090/targets in your browser. Verify that Telegraf a
 | prometheus.serviceMonitor.endpoints[0].port | string | `"prometheus-client"` | Port name for the Prometheus client service. |
 | prometheus.serviceMonitor.selectorLabels | object | `{"app.kubernetes.io/instance":"circleci-server","app.kubernetes.io/name":"telegraf"}` | Labels to select ServiceMonitors for scraping metrics. By default, it's configured to scrape the existing Telegraf deployment in CircleCI server. |
 | prometheus.serviceMonitor.selectorNamespaces | list | `[]` | Namespaces to look for ServiceMonitor objects. Set this if the CircleCI server monitoring stack is deploying in a different namespace than the actual CircleCI server installation. |
+| prometheusOperator.crds.annotations."helm.sh/resource-policy" | string | `"keep"` |  |
+| prometheusOperator.enabled | string | `"-"` |  |
 | prometheusOperator.image.repository | string | `"quay.io/prometheus-operator/prometheus-operator"` | Image repository for Prometheus Operator. |
 | prometheusOperator.image.tag | string | `"v0.80.1"` | Tag for the Prometheus Operator image. |
+| prometheusOperator.installCRDs | bool | `false` |  |
 | prometheusOperator.prometheusConfigReloader.image.repository | string | `"quay.io/prometheus-operator/prometheus-config-reloader"` | Image repository for Prometheus Config Reloader. |
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.80.1"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
-| prometheusOperatorCRDs.install | bool | `false` |  |

@@ -85,13 +85,13 @@ jobs:
             kubectl create ns circleci-server-monitoring
             kubectl config set-context --current --namespace circleci-server-monitoring
       - run:
-          name: Install chart dependencies
+          name: Install dependencies
           command: |
-            helm dependency update
-            helm install prometheus-operator-crds ./charts/prometheus-operator-crds-*.tgz
+            helm install circleci-server-monitoring-stack . --dependency-update -n circleci-server-monitoring \
+              --set global.enabled=false --set prometheusOperator.installCRDs=true
       - run:
           name: Install Helm chart
-          command: helm install circleci-server-monitoring-stack . --wait --timeout=2m -n circleci-server-monitoring
+          command: helm upgrade --install circleci-server-monitoring-stack . --reset-values --timeout=2m -n circleci-server-monitoring
       - run:
           name: Watch Pods
           command: kubectl get pods -w
@@ -133,9 +133,7 @@ jobs:
           when: on_fail
       - run:
           name: Uninstall Helm chart
-          command: |
-            helm uninstall circleci-server-monitoring-stack -n circleci-server-monitoring
-            helm uninstall prometheus-operator-crds
+          command: helm uninstall circleci-server-monitoring-stack -n circleci-server-monitoring
 
 commands:
   notify_failing_main:

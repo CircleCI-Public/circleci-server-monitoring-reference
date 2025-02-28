@@ -1,3 +1,5 @@
+{{- include "prometheusOperator.enabled" . -}}
+{{- if .prometheusOperatorEnabled }}
 {{- $name := include "server-monitoring.fullname" . -}}
 {{- $repository := .Values.prometheusOperator.image.repository -}}
 {{- $tag := .Values.prometheusOperator.image.tag -}}
@@ -67,3 +69,4 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       serviceAccountName: {{ $name}}-prometheus-operator
+{{- end }}

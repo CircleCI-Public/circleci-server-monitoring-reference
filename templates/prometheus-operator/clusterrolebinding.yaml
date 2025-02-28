@@ -1,3 +1,5 @@
+{{- include "prometheusOperator.enabled" . -}}
+{{- if .prometheusOperatorEnabled }}
 {{- $name := include "server-monitoring.fullname" . -}}
 
 apiVersion: rbac.authorization.k8s.io/v1
@@ -16,3 +18,4 @@ subjects:
   - kind: ServiceAccount
     name: {{ $name }}-prometheus-operator
     namespace:  {{ .Release.Namespace }}
+{{- end }}

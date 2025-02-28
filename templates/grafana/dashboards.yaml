@@ -1,3 +1,6 @@
+{{- include "grafana.enabled" . -}}
+{{- if .grafanaEnabled }}
+
 {{- $name := include "server-monitoring.fullname" . -}}
 {{- range .Values.grafana.dashboards }}
 apiVersion: grafana.integreatly.org/v1beta1
@@ -12,4 +15,6 @@ spec:
   json: |
     {{ .json | nindent 4 }}
 ---
+{{- end }}
+
 {{- end }}

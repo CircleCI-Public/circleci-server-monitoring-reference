@@ -1,3 +1,5 @@
+{{- include "prometheus.enabled" . -}}
+{{- if .prometheusEnabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -11,3 +13,4 @@ rules:
     verbs: ["get", "list", "watch"]
   - nonResourceURLs: ["/metrics"]
     verbs: ["get"]
+{{- end }}

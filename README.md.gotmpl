@@ -28,21 +28,20 @@ telegraf:
           listen: ":9273"
 ```
 
-### 2. Install the CRDs
+### 2. Install Dependencies
 
-Before installing the Prometheus operator, you must first install the Custom Resource Definitions (CRDs) required by it. Follow these steps:
+Before installing the full chart, you must first install the dependency subcharts, including the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
-$ helm dependency update
-$ helm install prometheus-operator-crds ./charts/prometheus-operator-crds-*.tgz
+$ helm install {{ template "chart.name" . }} . --dependency-update --set global.enabled=false --set prometheusOperator.installCRDs=true -n <your-server-namespace>
 ```
 
 ### 3. Install the Helm Chart
 
-Install the Helm chart using the following command. This assumes you are installing it in the same namespace as your CircleCI server:
+Next, install the Helm chart using the following command:
 
 ```bash
-$ helm install {{ template "chart.name" . }} . -n <your-server-namespace>
+$ helm upgrade --install {{ template "chart.name" . }} . --reset-values -n <your-server-namespace>
 ```
 
 > **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
