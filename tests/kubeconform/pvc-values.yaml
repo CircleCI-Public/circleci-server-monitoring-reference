@@ -1,0 +1,9 @@
+prometheus:
+  persistence:
+    enabled: true
+    storageClass: "custom-storage"
+
+grafana:
+  persistence:
+    enabled: true
+    storageClass: "custom-storage"

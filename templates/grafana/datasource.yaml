@@ -1,3 +1,5 @@
+{{- include "grafana.enabled" . -}}
+{{- if .grafanaEnabled }}
 {{- $name := include "server-monitoring.fullname" . -}}
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
@@ -11,7 +13,8 @@ spec:
       timeInterval: {{ .Values.grafana.datasource.jsonData.timeInterval }}
       tlsSkipVerify: true
     name: Prometheus
-    url: http://prometheus:9090
+    url: http://{{ $name }}-prometheus:9090
   instanceSelector:
     matchLabels:
       dashboards: grafana
+{{- end }}

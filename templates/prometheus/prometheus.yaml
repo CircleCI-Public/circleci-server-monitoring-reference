@@ -1,14 +1,15 @@
+{{- include "prometheus.enabled" . -}}
+{{- if .prometheusEnabled }}
+{{- $name := include "server-monitoring.fullname" . -}}
 {{- $repository := .Values.prometheus.image.repository -}}
 {{- $tag := .Values.prometheus.image.tag -}}
 
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
-  name: prometheus
+  name: {{ $name }}-prometheus
   labels:
-    app: prometheus
-  annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    app: {{ $name }}-prometheus
 spec:
   {{- with .Values.global.imagePullSecrets }}
   imagePullSecrets:
@@ -27,6 +28,22 @@ spec:
     fsGroup: 2000
     runAsNonRoot: true
     runAsUser: 1000
-  serviceAccountName: prometheus
+  serviceAccountName: {{ $name }}-prometheus
   version: {{ $tag }}
   serviceMonitorSelector: {}
+  {{- with .Values.prometheus.persistence }}
+  {{- if .enabled }}
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes: {{ .accessModes | toJson }}
+        resources:
+          requests:
+            storage: {{ .size }}
+        {{- if .storageClass }}
+        storageClassName: {{ .storageClass }}
+        {{- end }}
+  {{- end }}
+  {{- end }}
+
+{{- end }}

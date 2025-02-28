@@ -4,9 +4,12 @@ description: A reference Helm chart for setting up a monitoring stack for Circle
 version: 0.1.0
 dependencies:
   - name: prometheus-operator-crds
-    version: 18.0.1
+    version: 18.0.*
     repository: "https://prometheus-community.github.io/helm-charts"
+    condition: prometheusOperator.installCRDs
+    alias: prometheusOperator
   - name: grafana-operator
-    version: 5.16.0
+    version: 5.16.*
     repository: "https://grafana.github.io/helm-charts"
     alias: grafanaoperator
+    condition: grafanaoperator.enabled

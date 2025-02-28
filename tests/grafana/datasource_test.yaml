@@ -29,7 +29,7 @@ tests:
           value: Prometheus
       - equal:
           path: spec.datasource.url
-          value: http://prometheus:9090
+          value: http://server-monitoring-prometheus:9090
       - equal:
           path: spec.instanceSelector.matchLabels.dashboards
           value: grafana

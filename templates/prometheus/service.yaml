@@ -1,9 +1,13 @@
+{{- include "prometheus.enabled" . -}}
+{{- if .prometheusEnabled }}
+{{- $name := include "server-monitoring.fullname" . -}}
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus
+  name: {{ $name }}-prometheus
   labels:
-    app: prometheus
+    app: {{ $name }}-prometheus
 spec:
   ports:
     - name: web
@@ -12,3 +16,5 @@ spec:
   selector:
     app.kubernetes.io/name: prometheus
   sessionAffinity: ClientIP
+
+{{- end }}

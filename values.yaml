@@ -1,4 +1,5 @@
 global:
+  enabled: true
   # -- List of image pull secrets to be used across the deployment
   imagePullSecrets: []
   # -- Override the release name
@@ -7,6 +8,11 @@ global:
   fullnameOverride: "server-monitoring"
 
 prometheusOperator:
+  enabled: "-"
+  installCRDs: false
+  crds:
+    annotations:
+      "helm.sh/resource-policy": "keep"
   # -- Number of Prometheus Operator replicas to deploy.
   replicas: 1
   image:
@@ -22,6 +28,7 @@ prometheusOperator:
       tag: v0.80.1
 
 prometheus:
+  enabled: "-"
   # -- Number of Prometheus replicas to deploy.
   replicas: 2
   image:
@@ -42,6 +49,18 @@ prometheus:
     endpoints:
       - # -- Port name for the Prometheus client service.
         port: prometheus-client
+  persistence:
+    # -- Enable persistent storage for Prometheus.
+    enabled: false
+    # -- Access modes for the persistent volume.
+    accessModes:
+      - ReadWriteOnce
+    # -- Size of the persistent volume claim.
+    size: 10Gi
+    # -- Storage class for persistent volume provisioner. You can create a custom
+    # storage class with a "retain" policy to ensure the persistent volume
+    # remains even after the chart is uninstalled.
+    storageClass: ""
 
 # -- Full values for the Grafana Operator chart can be obtained at:
 # https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml
@@ -62,6 +81,7 @@ grafanaoperator:
       type: ClusterIP
 
 grafana:
+  enabled: "-"
   # -- Number of Grafana replicas to deploy.
   replicas: 2
   image:

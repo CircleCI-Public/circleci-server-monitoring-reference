@@ -80,22 +80,28 @@ jobs:
             chmod 0700 ~/.kube
             sudo microk8s kubectl config view --raw >"$HOME/.kube/config"
       - run:
-          name: Install Helm chart
+          name: Create namespace
           command: |
             kubectl create ns circleci-server-monitoring
             kubectl config set-context --current --namespace circleci-server-monitoring
-            helm dependency update
-            helm install circleci-server-monitoring-stack . --wait --timeout=2m -n circleci-server-monitoring
+      - run:
+          name: Install dependencies
+          command: |
+            helm install circleci-server-monitoring-stack . --dependency-update -n circleci-server-monitoring \
+              --set global.enabled=false --set prometheusOperator.installCRDs=true
+      - run:
+          name: Install Helm chart
+          command: helm upgrade --install circleci-server-monitoring-stack . --reset-values --timeout=2m -n circleci-server-monitoring
       - run:
           name: Watch Pods
           command: kubectl get pods -w
           background: true
       - run:
          name: Wait for Prometheus
-         command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/prometheus --timeout=2m
+         command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/server-monitoring-prometheus --timeout=2m
       - run:
           name: Port-forward Prometheus
-          command: kubectl port-forward svc/prometheus 9090
+          command: kubectl port-forward svc/server-monitoring-prometheus 9090
           background: true
       - run:
           name: Check Prometheus status

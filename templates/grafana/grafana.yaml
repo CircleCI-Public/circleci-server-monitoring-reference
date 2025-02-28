@@ -1,3 +1,5 @@
+{{- include "grafana.enabled" . -}}
+{{- if .grafanaEnabled }}
 {{- $name := include "server-monitoring.fullname" . -}}
 {{- $imagePullSecrets := .Values.global.imagePullSecrets -}}
 {{- with .Values.grafana }}
@@ -67,4 +69,5 @@ spec:
       mode: "console"
     auth:
       disable_login_form: "false"
+{{- end }}
 {{- end }}

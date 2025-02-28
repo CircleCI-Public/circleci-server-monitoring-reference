@@ -1,3 +1,6 @@
+{{- include "prometheusOperator.enabled" . -}}
+{{- if .prometheusOperatorEnabled }}
+{{- $name := include "server-monitoring.fullname" . -}}
 {{- $repository := .Values.prometheusOperator.image.repository -}}
 {{- $tag := .Values.prometheusOperator.image.tag -}}
 
@@ -8,9 +11,7 @@ metadata:
     app.kubernetes.io/component: controller
     app.kubernetes.io/name: prometheus-operator
     app.kubernetes.io/version: {{ $tag }}
-  annotations:
-    "helm.sh/hook": post-install,post-upgrade
-  name: prometheus-operator
+  name: {{ $name}}-prometheus-operator
 spec:
   replicas: {{ .Values.prometheusOperator.replicas }}
   selector:
@@ -67,4 +68,5 @@ spec:
         runAsUser: 65534
         seccompProfile:
           type: RuntimeDefault
-      serviceAccountName: prometheus-operator
+      serviceAccountName: {{ $name}}-prometheus-operator
+{{- end }}

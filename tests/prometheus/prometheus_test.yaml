@@ -27,3 +27,12 @@ tests:
       - equal:
           path: spec.imagePullSecrets[0].name
           value: regcred
+
+  - it: should enable persistence
+    set:
+      prometheus.persistence.enabled: true
+      prometheus.persistence.size: 11Gi
+    asserts:
+      - equal:
+          path: spec.storage.volumeClaimTemplate.spec.resources.requests.storage
+          value: 11Gi

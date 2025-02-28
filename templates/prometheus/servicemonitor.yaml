@@ -1,12 +1,14 @@
+{{- include "prometheus.enabled" . -}}
+{{- if .prometheusEnabled }}
+{{- $name := include "server-monitoring.fullname" . -}}
+
 {{- with .Values.prometheus.serviceMonitor }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: prometheus
+  name: {{ $name }}-prometheus
   labels:
-    app: prometheus
-  annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    app: {{ $name }}-prometheus
 spec:
   selector:
     matchLabels:
@@ -18,4 +20,5 @@ spec:
 {{- end }}
   endpoints:
 {{ toYaml .endpoints | indent 4 }}
+{{- end }}
 {{- end }}
