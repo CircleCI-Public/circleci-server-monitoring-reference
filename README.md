@@ -42,6 +42,8 @@ Before installing the full chart, you must first install the dependency subchart
 $ helm install circleci-server-monitoring-stack . --dependency-update --set global.enabled=false --set prometheusOperator.installCRDs=true -n <your-server-namespace>
 ```
 
+> **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
+
 ### 3. Install the Helm Chart
 
 Next, install the Helm chart using the following command:
@@ -49,8 +51,6 @@ Next, install the Helm chart using the following command:
 ```bash
 $ helm upgrade --install circleci-server-monitoring-stack . --reset-values -n <your-server-namespace>
 ```
-
-> **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
 
 ### 4. Verify Prometheus Is Up and Targeting Telegraf
 To verify that Prometheus is working correctly and targeting Telegraf, use the following command to port-forward Prometheus:
@@ -143,7 +143,7 @@ grafana:
 | grafanaoperator.image.tag | string | `"v5.16.0"` | Tag for the Grafana Operator image. |
 | prometheus.enabled | string | `"-"` |  |
 | prometheus.image.repository | string | `"quay.io/prometheus/prometheus"` | Image repository for Prometheus. |
-| prometheus.image.tag | string | `"v3.2.0"` | Tag for the Prometheus image. |
+| prometheus.image.tag | string | `"v3.2.1"` | Tag for the Prometheus image. |
 | prometheus.persistence.accessModes | list | `["ReadWriteOnce"]` | Access modes for the persistent volume. |
 | prometheus.persistence.enabled | bool | `false` | Enable persistent storage for Prometheus. |
 | prometheus.persistence.size | string | `"10Gi"` | Size of the persistent volume claim. |

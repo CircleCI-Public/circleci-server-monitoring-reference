@@ -35,7 +35,7 @@ prometheus:
     # -- Image repository for Prometheus.
     repository: quay.io/prometheus/prometheus
     # -- Tag for the Prometheus image.
-    tag: v3.2.0
+    tag: v3.2.1
   serviceMonitor:
     # -- Labels to select ServiceMonitors for scraping metrics.
     # By default, it's configured to scrape the existing Telegraf deployment in CircleCI server.
