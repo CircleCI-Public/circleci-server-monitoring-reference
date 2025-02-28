@@ -36,6 +36,8 @@ Before installing the full chart, you must first install the dependency subchart
 $ helm install {{ template "chart.name" . }} . --dependency-update --set global.enabled=false --set prometheusOperator.installCRDs=true -n <your-server-namespace>
 ```
 
+> **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
+
 ### 3. Install the Helm Chart
 
 Next, install the Helm chart using the following command:
@@ -43,8 +45,6 @@ Next, install the Helm chart using the following command:
 ```bash
 $ helm upgrade --install {{ template "chart.name" . }} . --reset-values -n <your-server-namespace>
 ```
-
-> **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
 
 ### 4. Verify Prometheus Is Up and Targeting Telegraf
 To verify that Prometheus is working correctly and targeting Telegraf, use the following command to port-forward Prometheus:
