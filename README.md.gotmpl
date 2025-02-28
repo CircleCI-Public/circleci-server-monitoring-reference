@@ -50,15 +50,63 @@ $ helm upgrade --install {{ template "chart.name" . }} . --reset-values -n <your
 To verify that Prometheus is working correctly and targeting Telegraf, use the following command to port-forward Prometheus:
 
 ```bash
-$ kubectl port-forward svc/prometheus 9090:9090 -n <your-namespace-here>
+$ kubectl port-forward svc/server-monitoring-prometheus 9090:9090 -n <your-namespace-here>
 ```
 
 Then visit http://localhost:9090/targets in your browser. Verify that Telegraf appears as a target and that its state is "up".
 
 ![Prometheus UI showing Telegraf target as up](docs/images/prometheus-telegraf-targets.png)
 
-### 5. Next Steps
+### 5. Verify Grafana Is Up and Connected to Prometheus
 
-[TODO: Add next steps]
+To verify that Grafana is working correctly and connected to Prometheus, use the following command to port-forward Grafana:
+```bash
+$ kubectl port-forward svc/server-monitoring-grafana-service 3000:3000 <your-namespace-here>
+```
+
+Then visit http://localhost:3000 in your browser. Once logged in with the default credentials, navigate to http://localhost:3000/dashboards and verify that the default dashboards are present and populating with data.
+
+![Prometheus UI showing Telegraf target as up](docs/images/grafana-dashboards.png)
+
+### 6. Next Steps
+
+After ensuring both Prometheus and Grafana are operational, consider these enhancements:
+
+#### Security
+Secure Grafana by configuring credentials:
+```yaml
+grafana:
+  credentials:
+    adminUser: "admin"
+    adminPassword: "<your-secure-password-here>"
+    existingSecretName: "<your-secret-here>"
+```
+> **_NOTE:_** Consider using Kubernetes secrets for dynamic credential management.
+
+#### Expose Grafana Externally
+
+For external access, modify the service type:
+```yaml
+grafanaoperator:
+  grafana:
+    service:
+      type: LoadBalancer
+```
+> **_NOTE:_** Ensure to use secure ingress controllers and firewall rules.
+
+#### Enabling Persistent Storage
+
+Persist data by enabling storage for Prometheus and Grafana:
+```yaml
+prometheus:
+  persistence:
+    enabled: true
+    storageClass: <your-custom-storage-class>
+grafana:
+  persistence:
+    enabled: true
+    storageClass: <your-custom-storage-class>
+```
+> **_NOTE:_** Use a custom storage class with a 'Retain' policy to secure data integrity.
 
 {{ template "chart.valuesSection" . }}
