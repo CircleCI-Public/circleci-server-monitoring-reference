@@ -23,6 +23,37 @@ spec:
       storageClassName: {{ .persistence.storageClass | quote }}
       {{- end }}
   {{- end }}
+  service:
+    spec:
+      type: {{ .service.type }}
+      ports:
+        - port: {{ .service.port }}
+          targetPort: 3000
+          protocol: TCP
+  {{- if .ingress.enabled }}
+  {{- with .ingress }}
+  ingress:
+    spec:
+      ingressClassName: {{ .className | quote }}
+      rules:
+        - host: {{ .host | quote }}
+          http:
+            paths:
+              - backend:
+                  service:
+                    name: {{ $name }}-grafana-service
+                    port:
+                      number: 3000
+                path: /
+                pathType: Prefix
+      {{- if .tls.enabled }}
+      tls:
+        - hosts:
+            - {{ .host | quote }}
+          secretName: {{ .tls.secretName | quote }}
+      {{- end }}
+  {{- end }}
+  {{- end }}
   deployment:
     spec:
       replicas: {{ .replicas }}
@@ -69,5 +100,9 @@ spec:
       mode: "console"
     auth:
       disable_login_form: "false"
+    {{- with .customConfig }}
+    {{ toYaml . | nindent 4 }}
+    {{- end }}
+
 {{- end }}
 {{- end }}

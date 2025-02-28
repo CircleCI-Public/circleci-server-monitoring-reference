@@ -93,10 +93,9 @@ grafana:
 
 For external access, modify the service type:
 ```yaml
-grafanaoperator:
-  grafana:
-    service:
-      type: LoadBalancer
+grafana:
+  service:
+    type: LoadBalancer
 ```
 > **_NOTE:_** Ensure to use secure ingress controllers and firewall rules.
 
@@ -126,19 +125,26 @@ grafana:
 | grafana.credentials.adminPassword | string | `"admin"` | Grafana admin password. Change from default for production environments. |
 | grafana.credentials.adminUser | string | `"admin"` | Grafana admin username. |
 | grafana.credentials.existingSecretName | string | `""` | Name of an existing secret for Grafana credentials. Leave empty to create a new secret. |
+| grafana.customConfig | string | `""` | Add any custom Grafana configurations you require here. This should be a YAML-formatted string of additional settings for Grafana. |
 | grafana.dashboards[0] | object | `{"json":"{\n  \"title\": \"CircleCI API Usage Dashboard\",\n  \"timezone\": \"browser\",\n  \"refresh\": \"5s\",\n  \"panels\": [\n    {\n      \"type\": \"timeseries\",\n      \"title\": \"API v2 Requests Count Over Time\",\n      \"targets\": [\n        {\n          \"expr\": \"circle.http.request.count\"\n        }\n      ]\n    }\n  ],\n  \"time\": {\n    \"from\": \"now-6h\",\n    \"to\": \"now\"\n  }\n}\n","name":"circleci-api-usage-dashboard","resyncPeriod":"30s"}` | Sample dashboards for basic monitoring of a CircleCI server installation. |
 | grafana.datasource.jsonData.timeInterval | string | `"5s"` | The time interval for Grafana to poll Prometheus. Specifies the frequency of data requests. |
 | grafana.enabled | string | `"-"` |  |
 | grafana.image.repository | string | `"grafana/grafana"` | Image repository for Grafana. |
 | grafana.image.tag | string | `"11.5.2"` | Tag for the Grafana image. |
+| grafana.ingress.className | string | `""` | Specifies the class of the Ingress controller. Required if the Kubernetes cluster includes multiple Ingress controllers. |
+| grafana.ingress.enabled | bool | `false` | Enable to create an Ingress resource for Grafana. Disabled by default. |
+| grafana.ingress.host | string | `""` | Hostname to use for the Ingress. Must be set if Ingress is enabled. |
+| grafana.ingress.tls.enabled | bool | `false` | Enable TLS for Ingress. Requires a TLS secret to be specified. |
+| grafana.ingress.tls.secretName | string | `""` | Name of the TLS secret used for securing the Ingress. Must be provided if TLS is enabled. |
 | grafana.persistence.accessModes | list | `["ReadWriteOnce"]` | Access modes for the persistent volume. |
 | grafana.persistence.enabled | bool | `false` | Enable persistent storage for Grafana. |
 | grafana.persistence.size | string | `"10Gi"` | Size of the persistent volume claim. |
 | grafana.persistence.storageClass | string | `""` | Storage class for persistent volume provisioner. You can create a custom storage class with a "retain" policy to ensure the persistent volume remains even after the chart is uninstalled. |
 | grafana.replicas | int | `2` | Number of Grafana replicas to deploy. |
-| grafanaoperator | object | `{"fullnameOverride":"server-monitoring-grafana-operator","grafana":{"service":{"type":"ClusterIP"}},"image":{"repository":"quay.io/grafana-operator/grafana-operator","tag":"v5.16.0"}}` | Full values for the Grafana Operator chart can be obtained at: https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
+| grafana.service.port | int | `3000` | Port on which the Grafana service will be exposed. |
+| grafana.service.type | string | `"ClusterIP"` | Specifies the type of service for Grafana. Options include ClusterIP, NodePort, or LoadBalancer. Use NodePort or LoadBalancer to expose Grafana externally. Ensure that grafana.credentials are set for security purposes. |
+| grafanaoperator | object | `{"fullnameOverride":"server-monitoring-grafana-operator","image":{"repository":"quay.io/grafana-operator/grafana-operator","tag":"v5.16.0"}}` | Full values for the Grafana Operator chart can be obtained at: https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
 | grafanaoperator.fullnameOverride | string | `"server-monitoring-grafana-operator"` | Overrides the fully qualified app name. |
-| grafanaoperator.grafana.service.type | string | `"ClusterIP"` | Specifies the type of service for Grafana. Options include ClusterIP, NodePort, or LoadBalancer. Use NodePort or LoadBalancer to expose Grafana externally. Ensure that grafana.credentials are set for security purposes. |
 | grafanaoperator.image.repository | string | `"quay.io/grafana-operator/grafana-operator"` | Image repository for the Grafana Operator. |
 | grafanaoperator.image.tag | string | `"v5.16.0"` | Tag for the Grafana Operator image. |
 | prometheus.enabled | string | `"-"` |  |
