@@ -76,7 +76,7 @@ grafanaoperator:
 grafana:
   enabled: "-"
   # -- Number of Grafana replicas to deploy.
-  replicas: 2
+  replicas: 1
   image:
     # -- Image repository for Grafana.
     repository: grafana/grafana
