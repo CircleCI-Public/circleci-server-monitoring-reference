@@ -97,6 +97,8 @@ grafana:
     type: "ClusterIP"
     # -- Port on which the Grafana service will be exposed.
     port: 3000
+    # -- Metadata annotations for the service.
+    annotations: {}
   ingress:
     # -- Enable to create an Ingress resource for Grafana. Disabled by default.
     enabled: false

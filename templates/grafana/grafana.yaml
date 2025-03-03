@@ -24,6 +24,11 @@ spec:
       {{- end }}
   {{- end }}
   service:
+    {{- with .service.annotations }}
+    metadata:
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
     spec:
       type: {{ .service.type }}
       ports:

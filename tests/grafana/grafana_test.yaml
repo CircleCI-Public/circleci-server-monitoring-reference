@@ -53,3 +53,19 @@ tests:
       - equal:
           path: spec.deployment.spec.template.spec.containers[0].env[1].valueFrom.secretKeyRef.name
           value: custom-grafana-credentials
+
+  - it: should configure service parameters correctly
+    set:
+      grafana.service.type: NodePort
+      grafana.service.port: 8080
+      grafana.service.annotations.my-annotation-key: my-annotation-value
+    asserts:
+      - equal:
+          path: spec.service.spec.type
+          value: NodePort
+      - equal:
+          path: spec.service.spec.ports[0].port
+          value: 8080
+      - equal:
+          path: spec.service.metadata.annotations.my-annotation-key
+          value: my-annotation-value

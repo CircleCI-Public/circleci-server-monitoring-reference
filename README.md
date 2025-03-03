@@ -141,6 +141,7 @@ grafana:
 | grafana.persistence.size | string | `"10Gi"` | Size of the persistent volume claim. |
 | grafana.persistence.storageClass | string | `""` | Storage class for persistent volume provisioner. You can create a custom storage class with a "retain" policy to ensure the persistent volume remains even after the chart is uninstalled. |
 | grafana.replicas | int | `1` | Number of Grafana replicas to deploy. |
+| grafana.service.annotations | object | `{}` | Metadata annotations for the service. |
 | grafana.service.port | int | `3000` | Port on which the Grafana service will be exposed. |
 | grafana.service.type | string | `"ClusterIP"` | Specifies the type of service for Grafana. Options include ClusterIP, NodePort, or LoadBalancer. Use NodePort or LoadBalancer to expose Grafana externally. Ensure that grafana.credentials are set for security purposes. |
 | grafanaoperator | object | `{"fullnameOverride":"server-monitoring-grafana-operator","image":{"repository":"quay.io/grafana-operator/grafana-operator","tag":"v5.16.0"}}` | Full values for the Grafana Operator chart can be obtained at: https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
