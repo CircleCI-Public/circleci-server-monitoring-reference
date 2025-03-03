@@ -85,13 +85,12 @@ grafana:
 
 #### Expose Grafana Externally
 
-For external access, modify the service type:
+For external access, modify the service or ingress values. For example:
 ```yaml
 grafana:
   service:
     type: LoadBalancer
 ```
-> **_NOTE:_** Ensure to use secure ingress controllers and firewall rules.
 
 #### Enabling Persistent Storage
 
