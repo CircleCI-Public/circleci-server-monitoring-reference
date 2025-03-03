@@ -72,18 +72,11 @@ grafanaoperator:
     repository: quay.io/grafana-operator/grafana-operator
     # -- Tag for the Grafana Operator image.
     tag: v5.16.0
-  grafana:
-    service:
-      # -- Specifies the type of service for Grafana. Options include ClusterIP,
-      # NodePort, or LoadBalancer. Use NodePort or LoadBalancer to expose
-      # Grafana externally. Ensure that grafana.credentials are set for
-      # security purposes.
-      type: ClusterIP
 
 grafana:
   enabled: "-"
   # -- Number of Grafana replicas to deploy.
-  replicas: 2
+  replicas: 1
   image:
     # -- Image repository for Grafana.
     repository: grafana/grafana
@@ -96,6 +89,33 @@ grafana:
     adminUser: "admin"
     # -- Grafana admin password. Change from default for production environments.
     adminPassword: "admin"
+  service:
+    # -- Specifies the type of service for Grafana. Options include ClusterIP,
+    # NodePort, or LoadBalancer. Use NodePort or LoadBalancer to expose
+    # Grafana externally. Ensure that grafana.credentials are set for
+    # security purposes.
+    type: "ClusterIP"
+    # -- Port on which the Grafana service will be exposed.
+    port: 3000
+    # -- Metadata annotations for the service.
+    annotations: {}
+  ingress:
+    # -- Enable to create an Ingress resource for Grafana. Disabled by default.
+    enabled: false
+    # -- Specifies the class of the Ingress controller. Required if the
+    # Kubernetes cluster includes multiple Ingress controllers.
+    className: ""
+    # -- Hostname to use for the Ingress. Must be set if Ingress is enabled.
+    host: ""
+    tls:
+      # -- Enable TLS for Ingress. Requires a TLS secret to be specified.
+      enabled: false
+      # -- Name of the TLS secret used for securing the Ingress. Must be
+      # provided if TLS is enabled.
+      secretName: ""
+  # -- Add any custom Grafana configurations you require here. This should be a
+  # YAML-formatted string of additional settings for Grafana.
+  customConfig: ""
   persistence:
     # -- Enable persistent storage for Grafana.
     enabled: false
