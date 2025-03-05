@@ -25,6 +25,8 @@
 
 .circleci/
 do
+docs/
+renovate.json5
 tests/
 target/
 *.gotmpl

@@ -20,6 +20,8 @@ workflows:
       - lint
       - test
       - docs
+      - package-chart:
+          context: runner-signing
       - smoke-tests
 
 jobs:
@@ -60,6 +62,40 @@ jobs:
               echo "No uncommitted changes detected."
             fi
 
+  package-chart:
+    executor: deploy
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install signing keys
+          command: |
+            exec 2>/dev/null
+
+            echo "Importing signing keys"
+            echo -n "${SIGNING_KEY_ENCODED}" | base64 --decode >signing_key_decoded.key
+            gpg --batch --yes --passphrase "${SIGNING_KEY_PASSPHRASE}" --import signing_key_decoded.key
+            rm signing_key_decoded.key
+            curl https://keys.openpgp.org/vks/v1/by-fingerprint/"${GPG_ID}" >pub-key.asc
+            gpg --import pub-key.asc
+            rm pub-key.asc
+
+            echo "Convert to legacy gpg format per Helm requirements"
+            gpg --export >~/.gnupg/pubring.gpg
+            gpg --batch --yes --pinentry-mode=loopback --passphrase "${SIGNING_KEY_PASSPHRASE}" --export-secret-keys "${GPG_ID}" >~/.gnupg/secring.gpg
+      - run:
+          name: Package and sign chart
+          command: |
+            echo "${SIGNING_KEY_PASSPHRASE}" | ./do package-chart sign --passphrase-file -
+      - run:
+          name: List contents of Helm package
+          command: tar -tvf "./target/circleci-server-monitoring-stack-$(./do version).tgz"
+      - persist_to_workspace:
+          root: .
+          paths: [./target]
+      - notify_failing_main
+
   smoke-tests:
     executor: linux-vm
     steps:
@@ -84,11 +120,12 @@ jobs:
           command: |
             kubectl create ns circleci-server-monitoring
             kubectl config set-context --current --namespace circleci-server-monitoring
+      - run: ./do package-chart
       - run:
           name: Install dependencies
           command: |
-            helm install circleci-server-monitoring-stack . --dependency-update -n circleci-server-monitoring \
-              --set global.enabled=false --set prometheusOperator.installCRDs=true
+            helm install circleci-server-monitoring-stack ./target/circleci-server-monitoring-stack*.tgz \
+              -n circleci-server-monitoring --set global.enabled=false --set prometheusOperator.installCRDs=true
       - run:
           name: Install Helm chart
           command: helm upgrade --install circleci-server-monitoring-stack . --reset-values --timeout=2m -n circleci-server-monitoring
