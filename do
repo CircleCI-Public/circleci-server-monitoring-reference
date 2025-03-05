@@ -3,6 +3,15 @@ set -euo pipefail
 
 # This variable is used, but shellcheck can't tell.
 # shellcheck disable=SC2034
+help_version="Print the chart version"
+version() {
+  check-helm
+
+  helm show chart . | grep '^version:' | cut -d' ' -f2
+}
+
+# This variable is used, but shellcheck can't tell.
+# shellcheck disable=SC2034
 help_kubeconform="Run helm kubeconform"
 kubeconform() {
     check-helm
@@ -35,6 +44,38 @@ helm-docs() {
     else
       helm-docs
     fi
+}
+
+# This variable is used, but shellcheck can't tell.
+# shellcheck disable=SC2034
+help_package_chart="Package the Helm chart"
+package-chart() {
+    check-helm
+
+    local arg="${1:-}"
+    if [ -n "${arg}" ]; then
+        shift
+    fi
+
+    echo 'Updating dependencies'
+    helm dependency update
+
+    mkdir -p target
+
+    echo 'Packaging Helm chart'
+    case ${arg} in
+    "sign")
+        echo 'Signing Helm chart'
+        # shellcheck disable=SC2086
+        helm package --sign --key "${KEY:-<eng-on-prem@circleci.com>}" --keyring ${KEYRING:-~/.gnupg/secring.gpg} \
+          --destination ./target . "$@"
+        echo 'Verifying Helm chart signature'
+        helm verify ./target/circleci-server-monitoring-stack-"$(version)".tgz
+        ;;
+    *)
+        helm package --destination ./target .
+        ;;
+    esac
 }
 
 check-helm() {
