@@ -8,6 +8,10 @@ executors:
     docker:
       - image: cimg/deploy:2025.01
     resource_class: medium
+  ruby:
+    docker:
+      - image: cimg/ruby:3.4
+    resource_class: medium
   linux-vm:
     machine:
       image: ubuntu-2204:current
@@ -18,11 +22,14 @@ workflows:
   main-workflow:
     jobs:
       - lint
-      - test
+      - unit-tests
       - docs
       - package-chart:
+          requires: [lint, unit-tests, docs]
           context: runner-signing
       - smoke-tests
+      - publish-chart:
+          requires: [package-chart, smoke-tests]
 
 jobs:
   lint:
@@ -41,7 +48,7 @@ jobs:
           when: always
       - notify_failing_main
 
-  test:
+  unit-tests:
     executor: deploy
     steps:
       - checkout
@@ -66,8 +73,6 @@ jobs:
     executor: deploy
     steps:
       - checkout
-      - attach_workspace:
-          at: .
       - run:
           name: Install signing keys
           command: |
@@ -95,6 +100,13 @@ jobs:
           root: .
           paths: [./target]
       - notify_failing_main
+
+  publish-chart:
+    executor: ruby
+    steps:
+      - run: gem install --no-document package_cloud
+      - attach_workspace:
+          at: .
 
   smoke-tests:
     executor: linux-vm
