@@ -8,6 +8,10 @@ executors:
     docker:
       - image: cimg/deploy:2025.01
     resource_class: medium
+  gh:
+    docker:
+      - image: maniator/gh:latest
+    resource_class: medium
   linux-vm:
     machine:
       image: ubuntu-2204:current
@@ -31,6 +35,9 @@ workflows:
               only: main
           requires: [package-chart, smoke-tests]
       - deploy-chart:
+          requires: [approve-deploy-chart]
+          context: runner-deploy
+      - create-release:
           requires: [approve-deploy-chart]
           context: runner-deploy
 
@@ -137,6 +144,15 @@ jobs:
       - notify_deploy:
           header: ":helm::server::grafana: Server monitoring Helm chart published"
           version: "$(./do version)"
+      - notify_failing_main
+
+  create-release:
+    executor: gh
+    steps:
+      - run: apk add --no-cache bash
+      - run:
+          name: Create Release
+          command: gh release create "$(./do version)" -R "CircleCI-Public/circleci-server-monitoring-reference"
       - notify_failing_main
 
   smoke-tests:
