@@ -8,10 +8,6 @@ executors:
     docker:
       - image: cimg/deploy:2025.01
     resource_class: medium
-  ruby:
-    docker:
-      - image: cimg/ruby:3.4
-    resource_class: medium
   linux-vm:
     machine:
       image: ubuntu-2204:current
@@ -28,8 +24,15 @@ workflows:
           requires: [lint, unit-tests, docs]
           context: runner-signing
       - smoke-tests
-      - publish-chart:
+      - approve-deploy-chart:
+          type: approval
+#          filters:
+#            branches:
+#              only: main
           requires: [package-chart, smoke-tests]
+      - deploy-chart:
+          requires: [approve-deploy-chart]
+          context: runner-deploy
 
 jobs:
   lint:
@@ -53,6 +56,7 @@ jobs:
     steps:
       - checkout
       - run: ./do unit-tests
+      - notify_failing_main
 
   docs:
     executor: linux-vm
@@ -68,6 +72,7 @@ jobs:
             else
               echo "No uncommitted changes detected."
             fi
+      - notify_failing_main
 
   package-chart:
     executor: deploy
@@ -101,12 +106,34 @@ jobs:
           paths: [./target]
       - notify_failing_main
 
-  publish-chart:
-    executor: ruby
+  deploy-chart:
+    executor: deploy
     steps:
-      - run: gem install --no-document package_cloud
+      - checkout
       - attach_workspace:
           at: .
+      - run:
+          name: Install package_cloud
+          command: |
+            sudo apt-get update && sudo apt-get install ruby-rubygems -y
+            sudo gem install --no-document package_cloud
+      - run:
+          name: Publish Helm chart
+          command: |
+            package_cloud push circleci/server-monitoring-stack/helm/v1 \
+              ./target/circleci-server-monitoring-stack-"$(./do version)".tgz
+      - run:
+          name: "Push failed: Have you bumped the chart version?"
+          command: |
+            echo "Push failed; this may be because the chart version already exists. Consider the following options:"
+            echo "1) Bump the version in Chart.yaml, run ./do helm-docs, and commit the changes."
+            echo "2) Manually yank the version if you need to overwrite it."
+            exit 1
+          when: on_fail
+      - notify_slack:
+          header: ":helm::server::grafana: Server monitoring Helm chart published"
+          version: "$(./do version)"
+      - notify_failing_main
 
   smoke-tests:
     executor: linux-vm
@@ -192,3 +219,59 @@ commands:
           branch_pattern: main
           event: fail
           template: basic_fail_1
+
+  notify_slack:
+    parameters:
+      header:
+        type: string
+      version:
+        type: string
+    steps:
+      - slack/notify:
+          channel: server-alerts
+          template: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "<< parameters.header >>",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project:*\n\\($CIRCLE_PROJECT_REPONAME)"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author:*\n\\($CIRCLE_USERNAME)"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Version:*\n\\(<< parameters.version >>)"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*CircleCI Build:*\n<\\($CIRCLE_BUILD_URL)|\\($CIRCLE_BUILD_NUM)>"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Commit Message:*\n\\($(git show -s --format=%s HEAD | jq -R . | sed -e 's/^"//' -e 's/"$//'))"
+                  }
+                }
+              ]
+            }
