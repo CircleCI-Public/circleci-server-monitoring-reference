@@ -47,7 +47,7 @@ $ helm repo update
 Before installing the full chart, you must first install the dependency subcharts, including the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
-$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --dependency-update --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.0 -n <your-server-namespace>
+$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.0 -n <your-server-namespace>
 ```
 > **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
 
