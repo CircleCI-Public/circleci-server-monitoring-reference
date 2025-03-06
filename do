@@ -70,7 +70,7 @@ package-chart() {
         helm package --sign --key "${KEY:-<eng-on-prem@circleci.com>}" --keyring ${KEYRING:-~/.gnupg/secring.gpg} \
           --destination ./target . "$@"
         echo 'Verifying Helm chart signature'
-        helm verify ./target/circleci-server-monitoring-stack-"$(version)".tgz
+        helm verify ./target/server-monitoring-stack-"$(version)".tgz
         ;;
     *)
         helm package --destination ./target .

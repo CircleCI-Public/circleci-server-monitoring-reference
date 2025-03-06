@@ -1,5 +1,5 @@
 apiVersion: v2
-name: circleci-server-monitoring-stack
+name: server-monitoring-stack
 description: A reference Helm chart for setting up a monitoring stack for CircleCI server
 version: 0.1.0-alpha.0
 dependencies:
