@@ -130,7 +130,7 @@ jobs:
             echo "2) Manually yank the version if you need to overwrite it."
             exit 1
           when: on_fail
-      - notify_slack:
+      - notify_deploy:
           header: ":helm::server::grafana: Server monitoring Helm chart published"
           version: "$(./do version)"
       - notify_failing_main
@@ -220,23 +220,31 @@ commands:
           event: fail
           template: basic_fail_1
 
-  notify_slack:
+  notify_deploy:
     parameters:
       header:
         type: string
       version:
         type: string
     steps:
+      - run:
+          name: Set environment for notification
+          command: |
+            echo "export HEADER_TEXT='<< parameters.header >>'" >> "$BASH_ENV"
+            echo "export VERSION='<< parameters.version >>'" >> "$BASH_ENV"
+            echo "export COMMIT_MSG='$(git show -s --format=%s HEAD | jq -R . | sed -e 's/^"//' -e 's/"$//')'" >> "$BASH_ENV"
       - slack/notify:
+          event: pass
+          debug: true
           channel: server-alerts
-          template: |
+          custom: |
             {
               "blocks": [
                 {
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "<< parameters.header >>",
+                    "text": "$HEADER_TEXT",
                     "emoji": true
                   }
                 },
@@ -245,11 +253,11 @@ commands:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Project:*\n\\($CIRCLE_PROJECT_REPONAME)"
+                      "text": "*Project:*\n$CIRCLE_PROJECT_REPONAME"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Author:*\n\\($CIRCLE_USERNAME)"
+                      "text": "*Author:*\n$CIRCLE_USERNAME"
                     }
                   ]
                 },
@@ -258,11 +266,11 @@ commands:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Version:*\n\\(<< parameters.version >>)"
+                      "text": "*Version:*\n$VERSION"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*CircleCI Build:*\n<\\($CIRCLE_BUILD_URL)|\\($CIRCLE_BUILD_NUM)>"
+                      "text": "*CircleCI Build:*\n<$CIRCLE_BUILD_URL|$CIRCLE_BUILD_NUM>"
                     }
                   ]
                 },
@@ -270,7 +278,7 @@ commands:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Commit Message:*\n\\($(git show -s --format=%s HEAD | jq -R . | sed -e 's/^"//' -e 's/"$//'))"
+                    "text": "*Commit Message:*\n$COMMIT_MSG"
                   }
                 }
               ]
