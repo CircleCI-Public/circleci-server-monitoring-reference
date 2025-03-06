@@ -150,7 +150,7 @@ jobs:
     executor: gh
     steps:
       - checkout
-      - run: apk add --no-cache bash
+      - run: apk add --no-cache bash helm
       - run:
           name: Create Release
           command: gh release create "$(./do version)" --generate-notes -R "CircleCI-Public/circleci-server-monitoring-reference"
