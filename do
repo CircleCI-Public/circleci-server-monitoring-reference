@@ -78,6 +78,18 @@ package-chart() {
     esac
 }
 
+# This variable is used, but shellcheck can't tell.
+# shellcheck disable=SC2034
+help_publish_chart="Push the Helm chart to Packagecloud"
+publish-chart() {
+    if ! [ -x "$(command -v package_cloud)" ]; then
+        echo 'The packagecloud CLI is required. See: https://packagecloud.io/l/cli'
+        exit 1
+    fi
+
+    package_cloud push circleci/server-monitoring-stack/helm/v1 ./target/circleci-server-monitoring-stack-"$(version)".tgz
+}
+
 check-helm() {
     if ! [ -x "$(command -v helm)" ]; then
         echo 'Helm is required. See: https://helm.sh/docs/intro/install/'
