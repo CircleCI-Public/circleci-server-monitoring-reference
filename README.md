@@ -34,25 +34,32 @@ telegraf:
           listen: ":9273"
 ```
 
-### 2. Install Dependencies
+### 3. Add Helm Repository
+
+First, add the CircleCI Server Monitoring Stack Helm repository:
+```bash
+$ helm repo add circleci-server-monitoring-stack https://packagecloud.io/circleci/server-monitoring-stack/helm
+$ helm repo update
+```
+
+### 3. Install Dependencies
 
 Before installing the full chart, you must first install the dependency subcharts, including the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
-$ helm install circleci-server-monitoring-stack . --dependency-update --set global.enabled=false --set prometheusOperator.installCRDs=true -n <your-server-namespace>
+$ helm install circleci-server-monitoring-stack circleci-server-monitoring-stack/circleci-server-monitoring-stack --dependency-update --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.0 -n <your-server-namespace>
 ```
-
 > **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
 
-### 3. Install the Helm Chart
+### 4. Install the Helm Chart
 
 Next, install the Helm chart using the following command:
 
 ```bash
-$ helm upgrade --install circleci-server-monitoring-stack . --reset-values -n <your-server-namespace>
+$ helm upgrade --install circleci-server-monitoring-stack circleci-server-monitoring-stack/circleci-server-monitoring-stack --reset-values --version 0.1.0-alpha.0 -n <your-server-namespace>
 ```
 
-### 4. Verify Prometheus Is Up and Targeting Telegraf
+### 5. Verify Prometheus Is Up and Targeting Telegraf
 To verify that Prometheus is working correctly and targeting Telegraf, use the following command to port-forward Prometheus:
 
 ```bash
@@ -63,7 +70,7 @@ Then visit http://localhost:9090/targets in your browser. Verify that Telegraf a
 
 ![Prometheus UI showing Telegraf target as up](docs/images/prometheus-telegraf-targets.png)
 
-### 5. Verify Grafana Is Up and Connected to Prometheus
+### 6. Verify Grafana Is Up and Connected to Prometheus
 
 To verify that Grafana is working correctly and connected to Prometheus, use the following command to port-forward Grafana:
 ```bash
@@ -74,7 +81,7 @@ Then visit http://localhost:3000 in your browser. Once logged in with the defaul
 
 ![Prometheus UI showing Telegraf target as up](docs/images/grafana-dashboards.png)
 
-### 6. Next Steps
+### 7. Next Steps
 
 After ensuring both Prometheus and Grafana are operational, consider these enhancements:
 
@@ -166,3 +173,7 @@ grafana:
 | prometheusOperator.prometheusConfigReloader.image.repository | string | `"quay.io/prometheus-operator/prometheus-config-reloader"` | Image repository for Prometheus Config Reloader. |
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.80.1"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
+
+## Releasing
+
+Releases are managed by the CI/CD pipeline on the main branch, with an approval job gate called `approve-deploy-chart`. Before releasing, increment the Helm chart version in `Chart.yaml` and regenerate the documentation using `./do helm-docs`. Once approved, the release will be available in the [package repository](https://packagecloud.io/circleci/server-monitoring-stack).
