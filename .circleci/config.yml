@@ -18,11 +18,21 @@ workflows:
   main-workflow:
     jobs:
       - lint
-      - test
+      - unit-tests
       - docs
       - package-chart:
+          requires: [lint, unit-tests, docs]
           context: runner-signing
       - smoke-tests
+      - approve-deploy-chart:
+          type: approval
+          filters:
+            branches:
+              only: main
+          requires: [package-chart, smoke-tests]
+      - deploy-chart:
+          requires: [approve-deploy-chart]
+          context: runner-deploy
 
 jobs:
   lint:
@@ -41,11 +51,12 @@ jobs:
           when: always
       - notify_failing_main
 
-  test:
+  unit-tests:
     executor: deploy
     steps:
       - checkout
       - run: ./do unit-tests
+      - notify_failing_main
 
   docs:
     executor: linux-vm
@@ -61,13 +72,12 @@ jobs:
             else
               echo "No uncommitted changes detected."
             fi
+      - notify_failing_main
 
   package-chart:
     executor: deploy
     steps:
       - checkout
-      - attach_workspace:
-          at: .
       - run:
           name: Install signing keys
           command: |
@@ -91,9 +101,42 @@ jobs:
       - run:
           name: List contents of Helm package
           command: tar -tvf "./target/circleci-server-monitoring-stack-$(./do version).tgz"
-      - persist_to_workspace:
-          root: .
-          paths: [./target]
+      - when:
+          condition:
+            equal: [<< pipeline.git.branch >>, main]
+          steps:
+            - persist_to_workspace:
+                root: .
+                paths: [./target]
+      - notify_failing_main
+
+  deploy-chart:
+    executor: deploy
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install package_cloud
+          command: |
+            sudo apt-get update && sudo apt-get install ruby-rubygems -y
+            sudo gem install --no-document package_cloud
+      - run:
+          name: Publish Helm chart
+          command: |
+            package_cloud push circleci/server-monitoring-stack/helm/v1 \
+              ./target/circleci-server-monitoring-stack-"$(./do version)".tgz
+      - run:
+          name: "Push failed: Have you bumped the chart version?"
+          command: |
+            echo "Push failed; this may be because the chart version already exists. Consider the following options:"
+            echo "1) Bump the version in Chart.yaml, run ./do helm-docs, and commit the changes."
+            echo "2) Manually yank the version if you need to overwrite it."
+            exit 1
+          when: on_fail
+      - notify_deploy:
+          header: ":helm::server::grafana: Server monitoring Helm chart published"
+          version: "$(./do version)"
       - notify_failing_main
 
   smoke-tests:
@@ -180,3 +223,66 @@ commands:
           branch_pattern: main
           event: fail
           template: basic_fail_1
+
+  notify_deploy:
+    parameters:
+      header:
+        type: string
+      version:
+        type: string
+    steps:
+      - run:
+          name: Set environment for notification
+          command: |
+            echo "export HEADER_TEXT='<< parameters.header >>'" >> "$BASH_ENV"
+            echo "export VERSION='<< parameters.version >>'" >> "$BASH_ENV"
+            echo "export COMMIT_MSG='$(git show -s --format=%s HEAD | jq -R . | sed -e 's/^"//' -e 's/"$//')'" >> "$BASH_ENV"
+      - slack/notify:
+          event: pass
+          channel: server-alerts
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "$HEADER_TEXT",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project:*\n$CIRCLE_PROJECT_REPONAME"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author:*\n$CIRCLE_USERNAME"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Version:*\n$VERSION"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*CircleCI Build:*\n<$CIRCLE_BUILD_URL|$CIRCLE_BUILD_NUM>"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Commit Message:*\n$COMMIT_MSG"
+                  }
+                }
+              ]
+            }
