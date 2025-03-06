@@ -26,9 +26,9 @@ workflows:
       - smoke-tests
       - approve-deploy-chart:
           type: approval
-#          filters:
-#            branches:
-#              only: main
+          filters:
+            branches:
+              only: main
           requires: [package-chart, smoke-tests]
       - deploy-chart:
           requires: [approve-deploy-chart]
@@ -101,9 +101,13 @@ jobs:
       - run:
           name: List contents of Helm package
           command: tar -tvf "./target/circleci-server-monitoring-stack-$(./do version).tgz"
-      - persist_to_workspace:
-          root: .
-          paths: [./target]
+      - when:
+          condition:
+            equal: [<< pipeline.git.branch >>, main]
+          steps:
+            - persist_to_workspace:
+                root: .
+                paths: [./target]
       - notify_failing_main
 
   deploy-chart:
@@ -235,7 +239,6 @@ commands:
             echo "export COMMIT_MSG='$(git show -s --format=%s HEAD | jq -R . | sed -e 's/^"//' -e 's/"$//')'" >> "$BASH_ENV"
       - slack/notify:
           event: pass
-          debug: true
           channel: server-alerts
           custom: |
             {
