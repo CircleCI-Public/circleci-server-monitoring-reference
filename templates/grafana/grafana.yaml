@@ -32,7 +32,8 @@ spec:
     spec:
       type: {{ .service.type }}
       ports:
-        - port: {{ .service.port }}
+        - name: http
+          port: {{ .service.port }}
           targetPort: 3000
           protocol: TCP
   {{- if .ingress.enabled }}
