@@ -95,6 +95,10 @@ spec:
                       key: GF_SECURITY_ADMIN_PASSWORD
                       name: {{ $credentialSecretName }}
                 {{- end }}
+                {{- if not (eq .rootURL "") }}
+                - name: GF_SERVER_ROOT_URL
+                  value: {{ .rootURL | quote }}
+                {{ end }}
           {{- if .persistence.enabled }}
           volumes:
             - name: grafana-data

@@ -116,6 +116,9 @@ grafana:
   # -- Add any custom Grafana configurations you require here. This should be a
   # YAML-formatted string of additional settings for Grafana.
   customConfig: ""
+  # -- This is the full URL used to access Grafana from a web browser. This is important
+  # if you use Google or GitHub OAuth authentication (for the callback URL to be correct).
+  rootURL: ""
   persistence:
     # -- Enable persistent storage for Grafana.
     enabled: false

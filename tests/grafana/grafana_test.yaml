@@ -69,3 +69,11 @@ tests:
       - equal:
           path: spec.service.metadata.annotations.my-annotation-key
           value: my-annotation-value
+
+  - it: should configure root url for grafana
+    set:
+      grafana.rootURL: "https://grafana.domain.com"
+    asserts:
+      - matchRegex:
+          path: spec.deployment.spec.template.spec.containers[0].env[?(@.name=="GF_SERVER_ROOT_URL")].value
+          pattern: "^https://grafana.domain.com$"
