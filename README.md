@@ -132,7 +132,7 @@ grafana:
 | grafana.credentials.adminUser | string | `"admin"` | Grafana admin username. |
 | grafana.credentials.existingSecretName | string | `""` | Name of an existing secret for Grafana credentials. Leave empty to create a new secret. |
 | grafana.customConfig | string | `""` | Add any custom Grafana configurations you require here. This should be a YAML-formatted string of additional settings for Grafana. |
-| grafana.dashboards[0] | object | `{"json":"{\n  \"title\": \"CircleCI API Usage Dashboard\",\n  \"timezone\": \"browser\",\n  \"refresh\": \"5s\",\n  \"panels\": [\n    {\n      \"type\": \"timeseries\",\n      \"title\": \"API v2 Requests Count Over Time\",\n      \"targets\": [\n        {\n          \"expr\": \"circle.http.request.count\"\n        }\n      ]\n    }\n  ],\n  \"time\": {\n    \"from\": \"now-6h\",\n    \"to\": \"now\"\n  }\n}\n","name":"circleci-api-usage-dashboard","resyncPeriod":"30s"}` | Sample dashboards for basic monitoring of a CircleCI server installation. |
+| grafana.dashboards.jsonDirectory | string | `"dashboards"` | The directory containing JSON files for Grafana dashboards. |
 | grafana.datasource.jsonData.timeInterval | string | `"5s"` | The time interval for Grafana to poll Prometheus. Specifies the frequency of data requests. |
 | grafana.enabled | string | `"-"` |  |
 | grafana.image.repository | string | `"grafana/grafana"` | Image repository for Grafana. |

@@ -134,28 +134,5 @@ grafana:
       # Specifies the frequency of data requests.
       timeInterval: 5s
   dashboards:
-    # -- Sample dashboards for basic monitoring of a CircleCI server installation.
-    - name: "circleci-api-usage-dashboard"
-      resyncPeriod: 30s
-      json: |
-        {
-          "title": "CircleCI API Usage Dashboard",
-          "timezone": "browser",
-          "refresh": "5s",
-          "panels": [
-            {
-              "type": "timeseries",
-              "title": "API v2 Requests Count Over Time",
-              "targets": [
-                {
-                  "expr": "circle.http.request.count"
-                }
-              ]
-            }
-          ],
-          "time": {
-            "from": "now-6h",
-            "to": "now"
-          }
-        }
-    # TODO: Add more dashboards in ticket ONPREM-1864
+    # -- The directory containing JSON files for Grafana dashboards.
+    jsonDirectory: dashboards

@@ -1,0 +1,20 @@
+{
+    "title": "CircleCI API Usage Dashboard",
+    "timezone": "browser",
+    "refresh": "5s",
+    "panels": [
+        {
+            "type": "timeseries",
+            "title": "API v2 Requests Count Over Time",
+            "targets": [
+                {
+                    "expr": "circle.http.request.count"
+                }
+            ]
+        }
+    ],
+    "time": {
+        "from": "now-6h",
+        "to": "now"
+    }
+}
