@@ -20,5 +20,5 @@ tests:
         documentIndex: 0
       - matchRegex:
           path: spec.json
-          pattern: '"title":\s*"CircleCI API Usage Dashboard"'
+          pattern: '"title":\s*"CircleCI v2 API Usage Dashboard"'
         documentIndex: 0
