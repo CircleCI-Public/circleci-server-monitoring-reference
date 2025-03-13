@@ -19,7 +19,7 @@ prometheusOperator:
     # -- Image repository for Prometheus Operator.
     repository: quay.io/prometheus-operator/prometheus-operator
     # -- Tag for the Prometheus Operator image.
-    tag: v0.80.1
+    tag: v0.81.0
   prometheusConfigReloader:
     image:
       # -- Image repository for Prometheus Config Reloader.
