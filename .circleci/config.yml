@@ -12,6 +12,10 @@ executors:
     docker:
       - image: maniator/gh:latest
     resource_class: medium
+  go:
+    docker:
+      - image: cimg/go:1.24.0
+    resource_class: medium
   linux-vm:
     machine:
       image: ubuntu-2204:current
@@ -21,11 +25,12 @@ executors:
 workflows:
   main-workflow:
     jobs:
-      - lint
+      - lint-chart
+      - lint-dashboards
       - unit-tests
       - docs
       - package-chart:
-          requires: [lint, unit-tests, docs]
+          requires: [lint-chart, lint-dashboards, unit-tests, docs]
           context: runner-signing
       - smoke-tests
       - approve-deploy-chart:
@@ -42,7 +47,7 @@ workflows:
           context: runner-deploy
 
 jobs:
-  lint:
+  lint-chart:
     executor: deploy
     steps:
       - checkout
@@ -56,6 +61,13 @@ jobs:
       - run:
           command: ./do kubeconform
           when: always
+      - notify_failing_main
+
+  lint-dashboards:
+    executor: go
+    steps:
+      - checkout
+      - run: ./do lint-dashboards
       - notify_failing_main
 
   unit-tests:
