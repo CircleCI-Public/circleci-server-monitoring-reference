@@ -14,6 +14,9 @@ spec:
   instanceSelector:
     matchLabels:
       dashboards: grafana
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
   json: |
 {{ $.Files.Get $path | nindent 4 }}
 {{- end }}
