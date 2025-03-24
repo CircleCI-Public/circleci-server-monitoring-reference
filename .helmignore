@@ -24,6 +24,7 @@
 .vscode/
 
 .circleci/
+bin/
 do
 docs/
 renovate.json5
