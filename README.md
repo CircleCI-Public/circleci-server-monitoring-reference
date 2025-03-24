@@ -9,7 +9,7 @@ This repository is currently under active development and is not yet a supported
 
 A reference Helm chart for setting up a monitoring stack for CircleCI server
 
-![Version: 0.1.0-alpha.1](https://img.shields.io/badge/Version-0.1.0--alpha.1-informational?style=flat-square)
+![Version: 0.1.0-alpha.2](https://img.shields.io/badge/Version-0.1.0--alpha.2-informational?style=flat-square)
 
 ## Installing the Monitoring Stack
 
@@ -47,7 +47,7 @@ $ helm repo update
 Before installing the full chart, you must first install the dependency subcharts, including the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
-$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.1 -n <your-server-namespace>
+$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.2 -n <your-server-namespace>
 ```
 > **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
 
@@ -56,7 +56,7 @@ $ helm install server-monitoring-stack server-monitoring-stack/server-monitoring
 Next, install the Helm chart using the following command:
 
 ```bash
-$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.1 -n <your-server-namespace>
+$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.2 -n <your-server-namespace>
 ```
 
 ### 5. Verify Prometheus Is Up and Targeting Telegraf
@@ -162,7 +162,11 @@ grafana:
 | prometheus.persistence.size | string | `"10Gi"` | Size of the persistent volume claim. |
 | prometheus.persistence.storageClass | string | `""` | Storage class for persistent volume provisioner. You can create a custom storage class with a "retain" policy to ensure the persistent volume remains even after the chart is uninstalled. |
 | prometheus.replicas | int | `2` | Number of Prometheus replicas to deploy. |
+| prometheus.serviceMonitor.endpoints[0].metricRelabelings[0].action | string | `"labeldrop"` |  |
+| prometheus.serviceMonitor.endpoints[0].metricRelabelings[0].regex | string | `"instance"` |  |
 | prometheus.serviceMonitor.endpoints[0].port | string | `"prometheus-client"` | Port name for the Prometheus client service. |
+| prometheus.serviceMonitor.endpoints[0].relabelings[0].action | string | `"labeldrop"` |  |
+| prometheus.serviceMonitor.endpoints[0].relabelings[0].regex | string | `"(container|endpoint|namespace|pod|service)"` |  |
 | prometheus.serviceMonitor.selectorLabels | object | `{"app.kubernetes.io/instance":"circleci-server","app.kubernetes.io/name":"telegraf"}` | Labels to select ServiceMonitors for scraping metrics. By default, it's configured to scrape the existing Telegraf deployment in CircleCI server. |
 | prometheus.serviceMonitor.selectorNamespaces | list | `[]` | Namespaces to look for ServiceMonitor objects. Set this if the CircleCI server monitoring stack is deploying in a different namespace than the actual CircleCI server installation. |
 | prometheusOperator.crds.annotations."helm.sh/resource-policy" | string | `"keep"` |  |
