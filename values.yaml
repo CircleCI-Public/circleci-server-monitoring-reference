@@ -49,6 +49,15 @@ prometheus:
     endpoints:
       - # -- Port name for the Prometheus client service.
         port: prometheus-client
+        # Default ServiceMonitor labels that are dropped since
+        # they overwrite app metric labels and are not useful
+        # as they always point to the server Telegraf instance.
+        relabelings:
+          - regex: (container|endpoint|namespace|pod|service)
+            action: labeldrop
+        metricRelabelings:
+          - regex: instance
+            action: labeldrop
   persistence:
     # -- Enable persistent storage for Prometheus.
     enabled: false

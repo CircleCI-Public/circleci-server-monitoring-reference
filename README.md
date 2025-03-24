@@ -162,7 +162,11 @@ grafana:
 | prometheus.persistence.size | string | `"10Gi"` | Size of the persistent volume claim. |
 | prometheus.persistence.storageClass | string | `""` | Storage class for persistent volume provisioner. You can create a custom storage class with a "retain" policy to ensure the persistent volume remains even after the chart is uninstalled. |
 | prometheus.replicas | int | `2` | Number of Prometheus replicas to deploy. |
+| prometheus.serviceMonitor.endpoints[0].metricRelabelings[0].action | string | `"labeldrop"` |  |
+| prometheus.serviceMonitor.endpoints[0].metricRelabelings[0].regex | string | `"instance"` |  |
 | prometheus.serviceMonitor.endpoints[0].port | string | `"prometheus-client"` | Port name for the Prometheus client service. |
+| prometheus.serviceMonitor.endpoints[0].relabelings[0].action | string | `"labeldrop"` |  |
+| prometheus.serviceMonitor.endpoints[0].relabelings[0].regex | string | `"(container|endpoint|namespace|pod|service)"` |  |
 | prometheus.serviceMonitor.selectorLabels | object | `{"app.kubernetes.io/instance":"circleci-server","app.kubernetes.io/name":"telegraf"}` | Labels to select ServiceMonitors for scraping metrics. By default, it's configured to scrape the existing Telegraf deployment in CircleCI server. |
 | prometheus.serviceMonitor.selectorNamespaces | list | `[]` | Namespaces to look for ServiceMonitor objects. Set this if the CircleCI server monitoring stack is deploying in a different namespace than the actual CircleCI server installation. |
 | prometheusOperator.crds.annotations."helm.sh/resource-policy" | string | `"keep"` |  |
