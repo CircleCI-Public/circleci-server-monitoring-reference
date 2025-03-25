@@ -90,7 +90,7 @@ grafana:
     # -- Image repository for Grafana.
     repository: grafana/grafana
     # -- Tag for the Grafana image.
-    tag: 11.5.2
+    tag: 11.6.0
   credentials:
     # -- Name of an existing secret for Grafana credentials. Leave empty to create a new secret.
     existingSecretName: ""
