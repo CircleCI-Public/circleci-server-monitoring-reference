@@ -1357,7 +1357,7 @@
           "useBackend": false
         }
       ],
-      "title": "Permission client calls error rate % by action excluding 4xx (expect < 0.5%)",
+      "title": "Permission client calls error rate % by action excluding 4xx",
       "type": "timeseries"
     },
     {
@@ -2250,7 +2250,7 @@
           "useBackend": false
         }
       ],
-      "title": " Task Queue Depth (Previous Run Queue)",
+      "title": " Task Queue Depth",
       "type": "timeseries"
     },
     {
@@ -2396,7 +2396,7 @@
           "refId": "D"
         }
       ],
-      "title": " Job Queue Depth (Previous Usage Queue)",
+      "title": " Job Queue Depth",
       "type": "timeseries"
     },
     {
