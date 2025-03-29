@@ -12,7 +12,7 @@ tests:
         documentIndex: 0
       - equal:
           path: metadata.name
-          value: circleci-api-usage-dashboard
+          value: server-slis
         documentIndex: 0
       - equal:
           path: spec.instanceSelector.matchLabels.dashboards
@@ -20,5 +20,5 @@ tests:
         documentIndex: 0
       - matchRegex:
           path: spec.json
-          pattern: '"title":\s*"CircleCI v2 API Usage Dashboard"'
+          pattern: '"title":\s*"Max latency of creating pipelines"'
         documentIndex: 0
