@@ -84,11 +84,13 @@ Secure Grafana by configuring credentials:
 ```yaml
 grafana:
   credentials:
+    # Directly set these for quick setups
     adminUser: "admin"
     adminPassword: "<your-secure-password-here>"
+
+    # For production, use a Kubernetes secret to manage credentials securely
     existingSecretName: "<your-secret-here>"
 ```
-> **_NOTE:_** Consider using Kubernetes secrets for dynamic credential management.
 
 #### Expose Grafana Externally
 
@@ -112,7 +114,7 @@ grafana:
     enabled: true
     storageClass: <your-custom-storage-class>
 ```
-> **_NOTE:_** Use a custom storage class with a 'Retain' policy to secure data integrity.
+> **_NOTE:_** Use a custom storage class with a 'Retain' policy to allow for data retention even after uninstalling the chart.
 
 ### 8. Modifying or Adding Grafana Dashboards
 
