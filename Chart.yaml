@@ -9,7 +9,7 @@ dependencies:
     condition: prometheusOperator.installCRDs
     alias: prometheusOperator
   - name: grafana-operator
-    version: 5.16.*
+    version: 5.17.*
     repository: "https://grafana.github.io/helm-charts"
     alias: grafanaoperator
     condition: grafanaoperator.enabled
