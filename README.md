@@ -17,7 +17,7 @@ A reference Helm chart for setting up a monitoring stack for CircleCI server
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://grafana.github.io/helm-charts | grafanaoperator(grafana-operator) | 5.16.* |
+| https://grafana.github.io/helm-charts | grafanaoperator(grafana-operator) | 5.17.* |
 | https://prometheus-community.github.io/helm-charts | prometheusOperator(prometheus-operator-crds) | 18.0.* |
 
 ### 1. Configure Server for the Monitoring Stack
