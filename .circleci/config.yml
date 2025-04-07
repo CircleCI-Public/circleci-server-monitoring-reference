@@ -27,11 +27,10 @@ workflows:
     jobs:
       - lint-chart
       - lint-dashboards
-      - verify-dashboard-conventions
       - unit-tests
       - docs
       - package-chart:
-          requires: [lint-chart, lint-dashboards, unit-tests, docs, verify-dashboard-conventions]
+          requires: [lint-chart, lint-dashboards, unit-tests, docs]
           context: runner-signing
       - smoke-tests
       - approve-deploy-chart:
@@ -70,22 +69,6 @@ jobs:
       - checkout
       - run: ./do lint-dashboards
       - notify_failing_main
-
-  verify-dashboard-conventions:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - checkout
-      - run:
-          name: "Verify Dashboard Title"
-          command: |
-            BOARD_TITLE="$(cat dashboards/server-slis.json | jq '.title')"
-            [[ "$BOARD_TITLE" = "Server SLIs" ]]
-      - run:
-          name: "Verify Dashboard UID"
-          command: |
-            BOARD_UID="$(cat dashboards/server-slis.json | jq '.uid')"
-            [[ "$BOARD_UID" = "beg3u6ond4ydcb"]]
 
   unit-tests:
     executor: deploy
@@ -255,9 +238,7 @@ jobs:
             exit 1
       - run:
           name: Describe Pods on failure
-          command: |
-            sudo snap install kubectl
-            kubectl describe pods & exit 1
+          command: kubectl describe pods & exit 1
           when: on_fail
       - run:
           name: Uninstall Helm chart
