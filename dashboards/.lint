@@ -1,0 +1,15 @@
+exclusions:
+  template-datasource-rule:
+    reason: "The individual panels have a datasource."
+    entries:
+    - dashboard: Server SLIs
+  panel-datasource-rule:
+    reason: "'${DS_PROMETHEUS}' is a valid datasource."
+    entries:
+    - dashboard: Server SLIs
+  panel-title-description-rule:
+    reason: "Ideally each panel should have a description, but right now that's not the case."
+  uneditable-dashboard:
+    reason: "The dashboard needs to be editable in order to make copies of it."
+    entries:
+    - dashboard: Server SLIs

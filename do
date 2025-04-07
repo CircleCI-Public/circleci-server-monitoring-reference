@@ -30,7 +30,7 @@ help_lint_dashboards="Lint the Grafana dashboards"
 lint-dashboards() {
     install-go-bin "github.com/grafana/dashboard-linter@latest"
 
-    ./bin/dashboard-linter lint dashboards/*
+    ./bin/dashboard-linter lint --strict --verbose dashboards/*
 }
 
 # This variable is used, but shellcheck can't tell.
