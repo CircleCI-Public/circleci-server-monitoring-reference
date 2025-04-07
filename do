@@ -26,11 +26,18 @@ kubeconform() {
 
 # This variable is used, but shellcheck can't tell.
 # shellcheck disable=SC2034
-help_lint_dashboards="Lint the Grafana dashboards"
+help_lint_dashboards="Lint the Grafana dashboards using dashboard-linter."
 lint-dashboards() {
     install-go-bin "github.com/grafana/dashboard-linter@latest"
 
     ./bin/dashboard-linter lint --strict --verbose dashboards/*
+}
+
+# This variable is used, but shellcheck can't tell.
+# shellcheck disable=SC2034
+help_validate_dashboards="Validate the configurations of default Grafana dashboards."
+validate-dashboards() {
+    bash scripts/validate_dashboards.sh
 }
 
 # This variable is used, but shellcheck can't tell.

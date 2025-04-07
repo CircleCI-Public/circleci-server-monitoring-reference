@@ -128,17 +128,24 @@ The default dashboards are located in the `dashboards` directory of the referenc
 
 Dashboards are provisioned directly from CRDs, which means any manual edits will be lost upon a refresh. As such, the workflow outlined below is recommended for making changes:
 
-1. Create a copy of the dashboard by selecting **Edit** in the upper right corner, then **Save dashboard** -> **Save as copy**. After saving, navigate to the copy.
-2. Make your edits to the copy and exit edit mode.
-3. Select **Export** in the upper right corner and then **Export as JSON**. **Ensure that `Export the dashboard to use in another instance` is toggled on.**
-4. Download the file and replace the `./dashboards/server-slis.json` file with the updated copy. Ensure to update the title and UID of the updated dashboard to match the original:
-   ```json
-   {
-     "title": "Server SLIs",
-     "uid": "beg3u6ond4ydcb"
-   }
-   ```
-5. Commit the result and open a PR for the On-Prem team to review.
+1. **Create a Copy**:
+   - Select **Edit** in the upper right corner.
+   - Choose **Save dashboard** -> **Save as copy**.
+   - After saving, navigate to the copy.
+2. **Make Edits**:
+   - Modify the copy as needed and exit edit mode.
+3. **Export as JSON**:
+   - Select **Export** in the upper right corner and then **Export as JSON**.
+   - **Ensure that `Export the dashboard to use in another instance` is toggled on.**
+4. **Run Validation Command**:
+   - Download the file and replace the `./dashboards/server-slis.json` file with the updated copy.
+   - Run the following command to automatically validate the JSON and apply necessary updates:
+     ```bash
+     ./do validate-dashboards
+     ```
+5. **Commit and Open a PR**:
+   - Review and commit the changes.
+   - Open a pull request for the On-Prem team to review.
 
 ## Values
 
