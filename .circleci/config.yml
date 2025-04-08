@@ -68,6 +68,14 @@ jobs:
     steps:
       - checkout
       - run: ./do lint-dashboards
+      - run: ./do validate-dashboards
+      - run:
+          name: Dashboards failed linting or validation
+          command: |
+            echo "Please refer to the documentation here:"
+            echo "https://github.com/circleci-public/circleci-server-monitoring-reference?tab=readme-ov-file#8-modifying-or-adding-grafana-dashboards"
+            exit 1
+          when: on_fail
       - notify_failing_main
 
   unit-tests:
