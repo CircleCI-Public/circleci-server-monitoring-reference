@@ -5,6 +5,13 @@ A reference for tools, configurations, and documentation used to monitor CircleC
 
 This repository is currently under active development and is not yet a supported resource. Please refer to it at your own discretion until further notice.
 
+## Table of Contents
+
+- [Installing the Monitoring Stack](#installing-the-monitoring-stack)
+- [Modifying or Adding Grafana Dashboards](#modifying-or-adding-grafana-dashboards)
+- [Helm Values](#values)
+- [Helm Releases](#releases)
+
 {{ template "chart.header" . }}
 {{ template "chart.description" . }}
 
@@ -116,7 +123,7 @@ grafana:
 ```
 > **_NOTE:_** Use a custom storage class with a 'Retain' policy to allow for data retention even after uninstalling the chart.
 
-### 8. Modifying or Adding Grafana Dashboards
+## Modifying or Adding Grafana Dashboards
 
 The default dashboards are located in the `dashboards` directory of the reference chart. To add new dashboards or modify existing ones, follow these steps.
 
@@ -131,7 +138,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 3. **Export as JSON**:
    - Select **Export** in the upper right corner and then **Export as JSON**.
    - **Ensure that `Export the dashboard to use in another instance` is toggled on.**
-4. **Run Validation Command**:
+4. **Update the JSON File**:
    - Download the file and replace the `./dashboards/server-slis.json` file with the updated copy.
    - Run the following command to automatically validate the JSON and apply necessary updates:
      ```bash
@@ -143,6 +150,6 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 
 {{ template "chart.valuesSection" . }}
 
-## Releasing
+## Releases
 
 Releases are managed by the CI/CD pipeline on the main branch, with an approval job gate called `approve-deploy-chart`. Before releasing, increment the Helm chart version in `Chart.yaml` and regenerate the documentation using `./do helm-docs`. Once approved, the release will be available in the [package repository](https://packagecloud.io/circleci/server-monitoring-stack).
