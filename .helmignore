@@ -26,6 +26,7 @@
 .circleci/
 bin/
 do
+dashboards/.lint
 docs/
 renovate.json5
 tests/
