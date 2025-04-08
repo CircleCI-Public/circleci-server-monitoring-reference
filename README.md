@@ -184,10 +184,10 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.service.annotations | object | `{}` | Metadata annotations for the service. |
 | grafana.service.port | int | `3000` | Port on which the Grafana service will be exposed. |
 | grafana.service.type | string | `"ClusterIP"` | Specifies the type of service for Grafana. Options include ClusterIP, NodePort, or LoadBalancer. Use NodePort or LoadBalancer to expose Grafana externally. Ensure that grafana.credentials are set for security purposes. |
-| grafanaoperator | object | `{"fullnameOverride":"server-monitoring-grafana-operator","image":{"repository":"quay.io/grafana-operator/grafana-operator","tag":"v5.16.0"}}` | Full values for the Grafana Operator chart can be obtained at: https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
+| grafanaoperator | object | `{"fullnameOverride":"server-monitoring-grafana-operator","image":{"repository":"quay.io/grafana-operator/grafana-operator","tag":"v5.17.0"}}` | Full values for the Grafana Operator chart can be obtained at: https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
 | grafanaoperator.fullnameOverride | string | `"server-monitoring-grafana-operator"` | Overrides the fully qualified app name. |
 | grafanaoperator.image.repository | string | `"quay.io/grafana-operator/grafana-operator"` | Image repository for the Grafana Operator. |
-| grafanaoperator.image.tag | string | `"v5.16.0"` | Tag for the Grafana Operator image. |
+| grafanaoperator.image.tag | string | `"v5.17.0"` | Tag for the Grafana Operator image. |
 | prometheus.enabled | string | `"-"` |  |
 | prometheus.image.repository | string | `"quay.io/prometheus/prometheus"` | Image repository for Prometheus. |
 | prometheus.image.tag | string | `"v3.2.1"` | Tag for the Prometheus image. |
