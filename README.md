@@ -209,7 +209,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheusOperator.image.tag | string | `"v0.80.1"` | Tag for the Prometheus Operator image. |
 | prometheusOperator.installCRDs | bool | `false` |  |
 | prometheusOperator.prometheusConfigReloader.image.repository | string | `"quay.io/prometheus-operator/prometheus-config-reloader"` | Image repository for Prometheus Config Reloader. |
-| prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.80.1"` | Tag for the Prometheus Config Reloader image. |
+| prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.81.0"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
 
 ## Releases
