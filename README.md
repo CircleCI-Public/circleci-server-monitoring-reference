@@ -170,7 +170,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.datasource.jsonData.timeInterval | string | `"5s"` | The time interval for Grafana to poll Prometheus. Specifies the frequency of data requests. |
 | grafana.enabled | string | `"-"` |  |
 | grafana.image.repository | string | `"grafana/grafana"` | Image repository for Grafana. |
-| grafana.image.tag | string | `"11.5.2"` | Tag for the Grafana image. |
+| grafana.image.tag | string | `"11.6.0"` | Tag for the Grafana image. |
 | grafana.ingress.className | string | `""` | Specifies the class of the Ingress controller. Required if the Kubernetes cluster includes multiple Ingress controllers. |
 | grafana.ingress.enabled | bool | `false` | Enable to create an Ingress resource for Grafana. Disabled by default. |
 | grafana.ingress.host | string | `""` | Hostname to use for the Ingress. Must be set if Ingress is enabled. |
