@@ -206,7 +206,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheusOperator.crds.annotations."helm.sh/resource-policy" | string | `"keep"` |  |
 | prometheusOperator.enabled | string | `"-"` |  |
 | prometheusOperator.image.repository | string | `"quay.io/prometheus-operator/prometheus-operator"` | Image repository for Prometheus Operator. |
-| prometheusOperator.image.tag | string | `"v0.80.1"` | Tag for the Prometheus Operator image. |
+| prometheusOperator.image.tag | string | `"v0.81.0"` | Tag for the Prometheus Operator image. |
 | prometheusOperator.installCRDs | bool | `false` |  |
 | prometheusOperator.prometheusConfigReloader.image.repository | string | `"quay.io/prometheus-operator/prometheus-config-reloader"` | Image repository for Prometheus Config Reloader. |
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.81.0"` | Tag for the Prometheus Config Reloader image. |
