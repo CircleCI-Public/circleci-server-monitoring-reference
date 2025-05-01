@@ -153,3 +153,11 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 ## Releases
 
 Releases are managed by the CI/CD pipeline on the main branch, with an approval job gate called `approve-deploy-chart`. Before releasing, increment the Helm chart version in `Chart.yaml` and regenerate the documentation using `./do helm-docs`. Once approved, the release will be available in the [package repository](https://packagecloud.io/circleci/server-monitoring-stack).
+
+# Server Monitoring Reference Support Policy
+
+This monitoring reference is not part of CircleCI’s Server product. CircleCI provides it as a monitoring tooling and configuration repository for CircleCI Server User(s) that may be referred to when the User(s) plan and deploy their own monitoring implementations.
+
+CircleCI strives to ensure that the monitoring tooling and configurations in this reference are functional and up to date. While CircleCI may provide reference to, answer questions regarding, and/or review contributions to the monitoring tooling and configurations, CircleCI does not make any judgment or recommendation as to the suitability for any customer installation of them with CircleCI Server, nor provide support for their installation and/or management in any customer’s system.
+
+**This monitoring reference and the monitoring tooling and configurations are provided on an ‘as-is’ and ‘as available’ basis without any warranties of any kind. CircleCI disclaims all warranties, express or implied, including, but not limited to, all implied warranties of merchantability, title, fitness for a particular purpose, and noninfringement.**
