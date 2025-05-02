@@ -249,6 +249,14 @@ jobs:
           command: kubectl describe pods & exit 1
           when: on_fail
       - run:
+          name: Describe Prometheus on failure
+          command: kubectl describe prometheus & exit 1
+          when: on_fail
+      - run:
+          name: Describe Grafana on failure
+          command: kubectl describe grafana & exit 1
+          when: on_fail
+      - run:
           name: Uninstall Helm chart
           command: helm uninstall server-monitoring-stack -n server-monitoring
 
