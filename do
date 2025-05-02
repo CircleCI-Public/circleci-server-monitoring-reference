@@ -55,11 +55,18 @@ unit-tests() {
 # shellcheck disable=SC2034
 help_helm_docs="Run helm-docs"
 helm-docs() {
-    if ! [ -x "$(command -v helm-docs)" ]; then
-        docker run --rm --volume "$(pwd):/helm-docs" -u $(id -u) jnorwood/helm-docs:latest
-    else
-      helm-docs
-    fi
+   case "$(uname -s)" in
+      Linux*) ./tooling/helm-docs-linux-x86;;
+      Darwin*) ./tooling/helm-docs-darwin-arm64;;
+   esac
+  
+   while getopts 'a' OPTION; do
+      case $OPTION in
+         a)
+            git add README.md
+         ;;
+      esac
+   done
 }
 
 # This variable is used, but shellcheck can't tell.

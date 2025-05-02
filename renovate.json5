@@ -3,4 +3,7 @@
   "extends": [
     "config:recommended"
   ]
+  "commands" : [
+     "./do helm-docs -a"
+  ]
 }
