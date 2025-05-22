@@ -16,7 +16,7 @@ This repository is currently under active development and is not yet a supported
 
 A reference Helm chart for setting up a monitoring stack for CircleCI server
 
-![Version: 0.1.0-alpha.3](https://img.shields.io/badge/Version-0.1.0--alpha.3-informational?style=flat-square)
+![Version: 0.1.0-alpha.4](https://img.shields.io/badge/Version-0.1.0--alpha.4-informational?style=flat-square)
 
 ## Installing the Monitoring Stack
 
@@ -54,7 +54,7 @@ $ helm repo update
 Before installing the full chart, you must first install the dependency subcharts, including the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
-$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.3 -n <your-server-namespace>
+$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.4 -n <your-server-namespace>
 ```
 > **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
 
@@ -63,7 +63,7 @@ $ helm install server-monitoring-stack server-monitoring-stack/server-monitoring
 Next, install the Helm chart using the following command:
 
 ```bash
-$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.3 -n <your-server-namespace>
+$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.4 -n <your-server-namespace>
 ```
 
 ### 5. Verify Prometheus Is Up and Targeting Telegraf
@@ -170,7 +170,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.datasource.jsonData.timeInterval | string | `"5s"` | The time interval for Grafana to poll Prometheus. Specifies the frequency of data requests. |
 | grafana.enabled | string | `"-"` |  |
 | grafana.image.repository | string | `"grafana/grafana"` | Image repository for Grafana. |
-| grafana.image.tag | string | `"12.0.0"` | Tag for the Grafana image. |
+| grafana.image.tag | string | `"12.0.0-security-01"` | Tag for the Grafana image. |
 | grafana.ingress.className | string | `""` | Specifies the class of the Ingress controller. Required if the Kubernetes cluster includes multiple Ingress controllers. |
 | grafana.ingress.enabled | bool | `false` | Enable to create an Ingress resource for Grafana. Disabled by default. |
 | grafana.ingress.host | string | `""` | Hostname to use for the Ingress. Must be set if Ingress is enabled. |
