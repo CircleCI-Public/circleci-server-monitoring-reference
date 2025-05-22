@@ -24,7 +24,7 @@ A reference Helm chart for setting up a monitoring stack for CircleCI server
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://grafana.github.io/helm-charts | grafanaoperator(grafana-operator) | 5.17.1 |
+| https://grafana.github.io/helm-charts | grafanaoperator(grafana-operator) | v5.18.0 |
 | https://prometheus-community.github.io/helm-charts | prometheusOperator(prometheus-operator-crds) | 19.0.0 |
 
 ### 1. Configure Server for the Monitoring Stack
@@ -170,7 +170,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.datasource.jsonData.timeInterval | string | `"5s"` | The time interval for Grafana to poll Prometheus. Specifies the frequency of data requests. |
 | grafana.enabled | string | `"-"` |  |
 | grafana.image.repository | string | `"grafana/grafana"` | Image repository for Grafana. |
-| grafana.image.tag | string | `"11.6.0"` | Tag for the Grafana image. |
+| grafana.image.tag | string | `"12.0.0"` | Tag for the Grafana image. |
 | grafana.ingress.className | string | `""` | Specifies the class of the Ingress controller. Required if the Kubernetes cluster includes multiple Ingress controllers. |
 | grafana.ingress.enabled | bool | `false` | Enable to create an Ingress resource for Grafana. Disabled by default. |
 | grafana.ingress.host | string | `""` | Hostname to use for the Ingress. Must be set if Ingress is enabled. |
@@ -184,10 +184,10 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.service.annotations | object | `{}` | Metadata annotations for the service. |
 | grafana.service.port | int | `3000` | Port on which the Grafana service will be exposed. |
 | grafana.service.type | string | `"ClusterIP"` | Specifies the type of service for Grafana. Options include ClusterIP, NodePort, or LoadBalancer. Use NodePort or LoadBalancer to expose Grafana externally. Ensure that grafana.credentials are set for security purposes. |
-| grafanaoperator | object | `{"env":[{"name":"ENFORCE_CACHE_LABELS","value":"off"}],"fullnameOverride":"server-monitoring-grafana-operator","image":{"repository":"quay.io/grafana-operator/grafana-operator","tag":"v5.17.0"}}` | Full values for the Grafana Operator chart can be obtained at: https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
+| grafanaoperator | object | `{"env":[{"name":"ENFORCE_CACHE_LABELS","value":"off"}],"fullnameOverride":"server-monitoring-grafana-operator","image":{"repository":"quay.io/grafana-operator/grafana-operator","tag":"v5.18.0"}}` | Full values for the Grafana Operator chart can be obtained at: https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
 | grafanaoperator.fullnameOverride | string | `"server-monitoring-grafana-operator"` | Overrides the fully qualified app name. |
 | grafanaoperator.image.repository | string | `"quay.io/grafana-operator/grafana-operator"` | Image repository for the Grafana Operator. |
-| grafanaoperator.image.tag | string | `"v5.17.0"` | Tag for the Grafana Operator image. |
+| grafanaoperator.image.tag | string | `"v5.18.0"` | Tag for the Grafana Operator image. |
 | prometheus.enabled | string | `"-"` |  |
 | prometheus.image.repository | string | `"quay.io/prometheus/prometheus"` | Image repository for Prometheus. |
 | prometheus.image.tag | string | `"v3.2.1"` | Tag for the Prometheus image. |
