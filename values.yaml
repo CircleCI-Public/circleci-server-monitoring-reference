@@ -80,7 +80,7 @@ grafanaoperator:
     # -- Image repository for the Grafana Operator.
     repository: quay.io/grafana-operator/grafana-operator
     # -- Tag for the Grafana Operator image.
-    tag: v5.17.0
+    tag: v5.18.0
   env:
     # https://github.com/grafana/grafana-operator/issues/1971
     - name: ENFORCE_CACHE_LABELS
@@ -94,7 +94,7 @@ grafana:
     # -- Image repository for Grafana.
     repository: grafana/grafana
     # -- Tag for the Grafana image.
-    tag: 11.6.0
+    tag: 12.0.0
   credentials:
     # -- Name of an existing secret for Grafana credentials. Leave empty to create a new secret.
     existingSecretName: ""
