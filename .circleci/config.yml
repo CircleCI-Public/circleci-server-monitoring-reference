@@ -182,7 +182,7 @@ jobs:
       - run:
           name: Install MicroK8s and Helm
           command: |
-            sudo apt-get update && sudo apt install snapd -y
+            sudo apt-get update && sudo apt install snapd=2.63+22.04ubuntu0.1 -y
             sudo snap install microk8s --classic --channel=1.32
             sudo snap install helm --classic
             sudo microk8s enable dns
