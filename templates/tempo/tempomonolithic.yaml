@@ -1,0 +1,55 @@
+{{- include "tempo.enabled" . -}}
+{{- if .tempoEnabled }}
+{{- $name := include "server-monitoring.fullname" . -}}
+
+apiVersion: tempo.grafana.com/v1alpha1
+kind: TempoMonolithic
+metadata:
+  name: {{ $name }}-tempo
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ $name }}-tempo
+spec:
+  {{- with .Values.tempo.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with .Values.tempo.storage.traces }}
+  storage:
+    traces:
+      backend: {{ .backend }}
+      size: {{ .size }}
+
+      {{- if eq .backend "s3" }}
+      s3:
+        secret: {{ .s3.secret }}
+      {{- end }}
+
+      {{- if eq .backend "gcs" }}
+      gcs:
+        secret: {{ .gcs.secret }}
+      {{- end }}
+  {{- end }}
+
+  # TODO: https://circleci.atlassian.net/browse/ONPREM-2157
+  #  observability:
+  #    grafana:
+  #      dataSource:
+  #        enabled: true
+
+  extraConfig:
+    tempo:
+      limits_config:
+        retention_period: {{ .Values.tempo.retentionPeriod }}
+      compactor:
+        ring:
+          kvstore:
+            store: inmemory
+      ingester:
+        lifecycler:
+          ring:
+            kvstore:
+              store: inmemory
+
+{{- end }}

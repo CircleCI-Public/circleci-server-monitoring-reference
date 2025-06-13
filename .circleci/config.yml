@@ -207,6 +207,14 @@ jobs:
             helm install server-monitoring-stack ./target/server-monitoring-stack*.tgz \
               -n server-monitoring --set global.enabled=false --set prometheusOperator.installCRDs=true
       - run:
+          name: Install Grafana Tempo operator
+          command: |
+            kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.18.0/cert-manager.yaml
+            kubectl wait --for=condition=available --timeout=30s deployment/cert-manager-webhook -n cert-manager
+
+            kubectl apply -f https://github.com/grafana/tempo-operator/releases/download/v0.16.0/tempo-operator.yaml
+            kubectl wait --for=condition=available --timeout=30s deployment/tempo-operator-controller -n tempo-operator-system
+      - run:
           name: Install Helm chart
           command: helm upgrade --install server-monitoring-stack . --reset-values --timeout=2m -n server-monitoring
       - run:

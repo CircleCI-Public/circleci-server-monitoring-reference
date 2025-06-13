@@ -7,3 +7,8 @@ grafana:
   persistence:
     enabled: true
     storageClass: "custom-storage"
+
+tempo:
+  storage:
+    traces:
+      backend: pv
