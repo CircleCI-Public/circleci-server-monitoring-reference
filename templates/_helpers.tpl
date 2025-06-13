@@ -36,3 +36,12 @@ Compute if grafana is enabled.
   (eq (.Values.grafana.enabled | toString) "true")
   (and (eq (.Values.grafana.enabled | toString) "-") (eq (.Values.global.enabled | toString) "true"))) -}}
 {{- end -}}
+
+{{/*
+Compute if tempo is enabled.
+*/}}
+{{- define "tempo.enabled" -}}
+{{- $_ := set . "tempoEnabled" (or
+  (eq (.Values.tempo.enabled | toString) "true")
+  (and (eq (.Values.tempo.enabled | toString) "-") (eq (.Values.global.enabled | toString) "true"))) -}}
+{{- end -}}
