@@ -15,13 +15,21 @@ version() {
 help_kubeconform="Run helm kubeconform"
 kubeconform() {
     check-helm
-
     install-plugin kubeconform https://github.com/jtyr/kubeconform-helm
 
-    helm kubeconform --ignore-missing-schema --verbose --summary --strict "$@" \
+    # Add schemas not included in any catalogs
+    schemas_dir="./target/schemas"
+    mkdir -p "${schemas_dir}"
+    cd "${schemas_dir}"
+    curl -s https://raw.githubusercontent.com/yannh/kubeconform/master/scripts/openapi2jsonschema.py | \
+        python3 - https://raw.githubusercontent.com/grafana/tempo-operator/refs/heads/main/config/crd/bases/tempo.grafana.com_tempomonolithics.yaml
+    cd -
+
+    helm kubeconform --verbose --summary --strict "$@" \
         --schema-location default \
-        --schema-location https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json \
-        . --skip GrafanaDashboard # https://github.com/yannh/kubeconform/issues/300
+        --schema-location "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json" \
+        --schema-location "${schemas_dir}/{{ .ResourceKind }}_{{.ResourceAPIVersion}}.json" \
+        .
 }
 
 # This variable is used, but shellcheck can't tell.

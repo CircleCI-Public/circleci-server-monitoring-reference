@@ -149,3 +149,53 @@ grafana:
   dashboards:
     # -- The directory containing JSON files for Grafana dashboards.
     jsonDirectory: dashboards
+
+tempo:
+  # -- Enable Tempo distributed tracing
+  # Requires manual installation of Tempo Operator
+  # Set to true to enable, false to disable, "-" to use global default
+  enabled: "-"
+  # -- Resource requirements for Tempo pods
+  # Adjust based on your trace volume and cluster capacity
+  resources:
+    requests:
+      # -- Minimum CPU guaranteed to Tempo pods
+      cpu: 500m
+      # -- Minimum memory guaranteed to Tempo pods
+      memory: 1Gi
+    limits:
+      # -- Maximum CPU Tempo pods can use
+      cpu: 1000m
+      # -- Maximum memory Tempo pods can use
+      memory: 2Gi
+  # -- Storage configuration for trace data
+  storage:
+    traces:
+      # -- Storage backend for traces
+      # Default: in-memory storage (traces lost on pod restart)
+      # Suitable for development/testing environments only
+      backend: memory
+
+      # -- Persistent Volume storage
+      # Stores traces on persistent disk attached to the pod
+      # backend: pv
+
+      # -- Cloud storage backends
+      # Choose based on your CircleCI server deployment location:
+
+      # -- AWS S3 (use if CircleCI server is on AWS)
+      # s3:
+      #   secret: tempo-s3-secret
+
+      # -- Google Cloud Storage (use if CircleCI server is on GCP)
+      # gcs:
+      #   secret: tempo-gcs-secret
+
+      # -- Storage volume size
+      # For memory/pv: actual volume size
+      # For cloud backends: size of WAL (Write-Ahead Log) volume
+      # Increase for higher trace volumes or longer retention
+      size: 20Gi
+  # -- Trace retention period
+  # How long to keep trace data before deletion
+  retentionPeriod: 24h
