@@ -51,12 +51,21 @@ $ helm repo update
 
 ### 3. Install Dependencies
 
-Before installing the full chart, you must first install the dependency subcharts, including the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
+Before installing the full chart, you must first install the dependency subcharts and operators.
+
+#### 3.1 Install Prometheus CRDs and Grafana Operator
+
+Install the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
 $ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.4 -n <your-server-namespace>
 ```
-> **_NOTE:_**  It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
+
+> **_NOTE:_** It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
+
+#### 3.2 Install Tempo Operator (Optional)
+
+If you plan to enable distributed tracing with Tempo (`tempo.enabled=true`), you must manually install the Tempo Operator by following the official documentation at https://grafana.com/docs/tempo/latest/setup/operator/#installation[]. There is currently no official Helm chart available for the Tempo Operator or its CRDs.
 
 ### 4. Install the Helm Chart
 
@@ -211,6 +220,16 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheusOperator.prometheusConfigReloader.image.repository | string | `"quay.io/prometheus-operator/prometheus-config-reloader"` | Image repository for Prometheus Config Reloader. |
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.81.0"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
+| tempo.enabled | string | `"-"` | Enable Tempo distributed tracing Requires manual installation of Tempo Operator Set to true to enable, false to disable, "-" to use global default |
+| tempo.resources | object | `{"limits":{"cpu":"1000m","memory":"2Gi"},"requests":{"cpu":"500m","memory":"1Gi"}}` | Resource requirements for Tempo pods Adjust based on your trace volume and cluster capacity |
+| tempo.resources.limits.cpu | string | `"1000m"` | Maximum CPU Tempo pods can use |
+| tempo.resources.limits.memory | string | `"2Gi"` | Maximum memory Tempo pods can use |
+| tempo.resources.requests.cpu | string | `"500m"` | Minimum CPU guaranteed to Tempo pods |
+| tempo.resources.requests.memory | string | `"1Gi"` | Minimum memory guaranteed to Tempo pods |
+| tempo.retentionPeriod | string | `"24h"` | Trace retention period How long to keep trace data before deletion |
+| tempo.storage | object | `{"traces":{"backend":"memory","size":"20Gi"}}` | Storage configuration for trace data |
+| tempo.storage.traces.backend | string | `"memory"` | Storage backend for traces Default: in-memory storage (traces lost on pod restart) Suitable for development/testing environments only |
+| tempo.storage.traces.size | string | `"20Gi"` | Storage volume size For memory/pv: actual volume size For cloud backends: size of WAL (Write-Ahead Log) volume Increase for higher trace volumes or longer retention |
 
 ## Releases
 

@@ -1,0 +1,109 @@
+suite: test tempo
+templates:
+  - tempo/tempomonolithic.yaml
+tests:
+  - it: should work with basic configuration
+    set:
+      tempo.enabled: true
+      tempo.resources.requests.cpu: 250m
+      tempo.resources.requests.memory: 512Mi
+      tempo.resources.limits.cpu: 500m
+      tempo.resources.limits.memory: 1Gi
+      tempo.storage.traces.size: 20Gi
+    asserts:
+      - isKind:
+          of: TempoMonolithic
+      - matchRegex:
+          path: metadata.name
+          pattern: tempo
+      - equal:
+          path: spec.resources.requests.cpu
+          value: 250m
+      - equal:
+          path: spec.resources.requests.memory
+          value: 512Mi
+      - equal:
+          path: spec.resources.limits.cpu
+          value: 500m
+      - equal:
+          path: spec.resources.limits.memory
+          value: 1Gi
+      - equal:
+          path: spec.storage.traces.size
+          value: 20Gi
+
+  - it: should configure memory backend
+    set:
+      tempo.enabled: true
+      tempo.storage.traces.backend: memory
+      tempo.storage.traces.size: 2Gi
+    asserts:
+      - equal:
+          path: spec.storage.traces.backend
+          value: memory
+      - equal:
+          path: spec.storage.traces.size
+          value: 2Gi
+
+  - it: should configure s3 backend
+    set:
+      tempo.enabled: true
+      tempo.storage.traces.backend: s3
+      tempo.storage.traces.s3.secret: my-s3-secret
+      tempo.storage.traces.size: 100Gi
+    asserts:
+      - equal:
+          path: spec.storage.traces.backend
+          value: s3
+      - equal:
+          path: spec.storage.traces.s3.secret
+          value: my-s3-secret
+      - equal:
+          path: spec.storage.traces.size
+          value: 100Gi
+
+  - it: should configure gcs backend
+    set:
+      tempo.enabled: true
+      tempo.storage.traces.backend: gcs
+      tempo.storage.traces.gcs.secret: my-gcs-secret
+      tempo.storage.traces.size: 100Gi
+    asserts:
+      - equal:
+          path: spec.storage.traces.backend
+          value: gcs
+      - equal:
+          path: spec.storage.traces.gcs.secret
+          value: my-gcs-secret
+      - equal:
+          path: spec.storage.traces.size
+          value: 100Gi
+
+  - it: should configure pv backend
+    set:
+      tempo.enabled: true
+      tempo.storage.traces.backend: pv
+      tempo.storage.traces.size: 50Gi
+    asserts:
+      - equal:
+          path: spec.storage.traces.backend
+          value: pv
+      - equal:
+          path: spec.storage.traces.size
+          value: 50Gi
+
+  - it: should set retention period
+    set:
+      tempo.enabled: true
+      tempo.retentionPeriod: 7d
+    asserts:
+      - equal:
+          path: spec.extraConfig.tempo.limits_config.retention_period
+          value: 7d
+
+  - it: should not create resource when disabled
+    set:
+      tempo.enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
