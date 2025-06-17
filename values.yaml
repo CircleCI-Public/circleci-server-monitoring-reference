@@ -81,10 +81,6 @@ grafanaoperator:
     repository: quay.io/grafana-operator/grafana-operator
     # -- Tag for the Grafana Operator image.
     tag: v5.18.0
-  env:
-    # https://github.com/grafana/grafana-operator/issues/1971
-    - name: ENFORCE_CACHE_LABELS
-      value: "off"
 
 grafana:
   enabled: "-"
