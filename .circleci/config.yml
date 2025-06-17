@@ -213,6 +213,10 @@ jobs:
             kubectl wait --for=condition=available --timeout=30s deployment/cert-manager-webhook -n cert-manager
 
             kubectl apply -f https://github.com/grafana/tempo-operator/releases/download/v0.16.0/tempo-operator.yaml
+            kubectl get cm tempo-operator-manager-config -n tempo-operator-system -o yaml | \
+              sed 's/^  *grafanaOperator: false$/      grafanaOperator: true/' | \
+              kubectl apply -f -
+            kubectl rollout restart deployment/tempo-operator-controller -n tempo-operator-system
             kubectl wait --for=condition=available --timeout=30s deployment/tempo-operator-controller -n tempo-operator-system
       - run:
           name: Install Helm chart
@@ -232,6 +236,14 @@ jobs:
           name: Check Prometheus status
           command: |
             curl --retry 5 --retry-connrefused --retry-max-time 120 http://localhost:9090/api/v1/status/buildinfo
+      - run:
+          name: Port-forward Tempo
+          command: kubectl port-forward svc/tempo-server-monitoring-tempo 3200
+          background: true
+      - run:
+          name: Check Tempo status
+          command: |
+            curl --retry 5 --retry-connrefused --retry-max-time 120 http://localhost:3200/api/status/buildinfo
       - run:
           name: Wait for Grafana
           command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/server-monitoring-grafana-service --timeout=2m
@@ -253,12 +265,27 @@ jobs:
             echo "Prometheus data source is not healthy: ${status}"
             exit 1
       - run:
+          name: Check Grafana's Tempo data source is configured
+          command: |
+            for i in {1..30}; do
+              id=$(curl --retry 5 --retry-connrefused -s -u admin:admin "http://localhost:3000/api/datasources/name/server-monitoring-tempo" | jq -r '.id')
+              [ "$id" != "null" ] && echo "Got ID ${id} for Tempo. Data source is configured." && exit 0
+              echo "Tempo data source not configured yet. Retrying..."
+              sleep 10
+            done
+            echo "Tempo data source configuration failed"
+            exit 1
+      - run:
           name: Describe Pods on failure
           command: kubectl describe pods & exit 1
           when: on_fail
       - run:
           name: Describe Prometheus on failure
           command: kubectl describe prometheus & exit 1
+          when: on_fail
+      - run:
+          name: Describe Tempo on failure
+          command: kubectl describe tempomonolithic & exit 1
           when: on_fail
       - run:
           name: Describe Grafana on failure

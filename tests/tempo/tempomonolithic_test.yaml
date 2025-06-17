@@ -92,14 +92,16 @@ tests:
           path: spec.storage.traces.size
           value: 50Gi
 
-  - it: should set retention period
+  - it: should configure custom distributor config
     set:
       tempo.enabled: true
-      tempo.retentionPeriod: 7d
+      tempo.customConfig:
+        distributor:
+          log_received_traces: true
     asserts:
       - equal:
-          path: spec.extraConfig.tempo.limits_config.retention_period
-          value: 7d
+          path: spec.extraConfig.distributor.log_received_traces
+          value: true
 
   - it: should not create resource when disabled
     set:

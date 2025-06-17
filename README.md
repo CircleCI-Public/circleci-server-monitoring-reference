@@ -65,7 +65,30 @@ $ helm install server-monitoring-stack server-monitoring-stack/server-monitoring
 
 #### 3.2 Install Tempo Operator (Optional)
 
-If you plan to enable distributed tracing with Tempo (`tempo.enabled=true`), you must manually install the Tempo Operator by following the official documentation at https://grafana.com/docs/tempo/latest/setup/operator/#installation[]. There is currently no official Helm chart available for the Tempo Operator or its CRDs.
+If you plan to enable distributed tracing with Tempo (`tempo.enabled=true`), you must manually install the Tempo Operator. There is currently no official Helm chart available for the Tempo Operator or its CRDs, so manual installation is required. The Tempo Operator also requires cert-manager to be installed in your cluster. Additionally, this reference chart requires the `grafanaOperator` feature gate to be enabled for proper integration with Grafana.
+
+For more detailed installation instructions, refer to the [official Tempo Operator documentation](https://grafana.com/docs/tempo/latest/setup/operator/#installation).
+
+**Prerequisites:**
+- cert-manager must be installed in your cluster
+
+**Example installation steps:**
+
+1. Install the Tempo Operator:
+```bash
+$ kubectl apply -f https://github.com/grafana/tempo-operator/releases/download/v0.16.0/tempo-operator.yaml
+```
+2. Enable the `grafanaOperator` feature gate (required for integration with Grafana):
+```bash
+$ kubectl get cm tempo-operator-manager-config -n tempo-operator-system -o yaml | \
+    sed 's/^  *grafanaOperator: false$/      grafanaOperator: true/' | \
+    kubectl apply -f -
+```
+3. Restart the operator deployment to apply the configuration:
+```bash
+$ kubectl rollout restart deployment/tempo-operator-controller -n tempo-operator-system
+$ kubectl wait --for=condition=available --timeout=120s deployment/tempo-operator-controller -n tempo-operator-system
+```
 
 ### 4. Install the Helm Chart
 
@@ -193,7 +216,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.service.annotations | object | `{}` | Metadata annotations for the service. |
 | grafana.service.port | int | `3000` | Port on which the Grafana service will be exposed. |
 | grafana.service.type | string | `"ClusterIP"` | Specifies the type of service for Grafana. Options include ClusterIP, NodePort, or LoadBalancer. Use NodePort or LoadBalancer to expose Grafana externally. Ensure that grafana.credentials are set for security purposes. |
-| grafanaoperator | object | `{"env":[{"name":"ENFORCE_CACHE_LABELS","value":"off"}],"fullnameOverride":"server-monitoring-grafana-operator","image":{"repository":"quay.io/grafana-operator/grafana-operator","tag":"v5.18.0"}}` | Full values for the Grafana Operator chart can be obtained at: https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
+| grafanaoperator | object | `{"fullnameOverride":"server-monitoring-grafana-operator","image":{"repository":"quay.io/grafana-operator/grafana-operator","tag":"v5.18.0"}}` | Full values for the Grafana Operator chart can be obtained at: https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
 | grafanaoperator.fullnameOverride | string | `"server-monitoring-grafana-operator"` | Overrides the fully qualified app name. |
 | grafanaoperator.image.repository | string | `"quay.io/grafana-operator/grafana-operator"` | Image repository for the Grafana Operator. |
 | grafanaoperator.image.tag | string | `"v5.18.0"` | Tag for the Grafana Operator image. |
@@ -220,13 +243,13 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheusOperator.prometheusConfigReloader.image.repository | string | `"quay.io/prometheus-operator/prometheus-config-reloader"` | Image repository for Prometheus Config Reloader. |
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.81.0"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
+| tempo.customConfig | object | `{}` | Add any custom Tempo configurations you require here. This should be a YAML object of additional settings for Tempo. |
 | tempo.enabled | string | `"-"` | Enable Tempo distributed tracing Requires manual installation of Tempo Operator Set to true to enable, false to disable, "-" to use global default |
 | tempo.resources | object | `{"limits":{"cpu":"1000m","memory":"2Gi"},"requests":{"cpu":"500m","memory":"1Gi"}}` | Resource requirements for Tempo pods Adjust based on your trace volume and cluster capacity |
 | tempo.resources.limits.cpu | string | `"1000m"` | Maximum CPU Tempo pods can use |
 | tempo.resources.limits.memory | string | `"2Gi"` | Maximum memory Tempo pods can use |
 | tempo.resources.requests.cpu | string | `"500m"` | Minimum CPU guaranteed to Tempo pods |
 | tempo.resources.requests.memory | string | `"1Gi"` | Minimum memory guaranteed to Tempo pods |
-| tempo.retentionPeriod | string | `"24h"` | Trace retention period How long to keep trace data before deletion |
 | tempo.storage | object | `{"traces":{"backend":"memory","size":"20Gi"}}` | Storage configuration for trace data |
 | tempo.storage.traces.backend | string | `"memory"` | Storage backend for traces Default: in-memory storage (traces lost on pod restart) Suitable for development/testing environments only |
 | tempo.storage.traces.size | string | `"20Gi"` | Storage volume size For memory/pv: actual volume size For cloud backends: size of WAL (Write-Ahead Log) volume Increase for higher trace volumes or longer retention |

@@ -81,10 +81,6 @@ grafanaoperator:
     repository: quay.io/grafana-operator/grafana-operator
     # -- Tag for the Grafana Operator image.
     tag: v5.18.0
-  env:
-    # https://github.com/grafana/grafana-operator/issues/1971
-    - name: ENFORCE_CACHE_LABELS
-      value: "off"
 
 grafana:
   enabled: "-"
@@ -196,6 +192,6 @@ tempo:
       # For cloud backends: size of WAL (Write-Ahead Log) volume
       # Increase for higher trace volumes or longer retention
       size: 20Gi
-  # -- Trace retention period
-  # How long to keep trace data before deletion
-  retentionPeriod: 24h
+  # -- Add any custom Tempo configurations you require here. This should be a
+  # YAML object of additional settings for Tempo.
+  customConfig: {}
