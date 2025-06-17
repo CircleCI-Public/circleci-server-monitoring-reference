@@ -65,7 +65,30 @@ $ helm install server-monitoring-stack server-monitoring-stack/server-monitoring
 
 #### 3.2 Install Tempo Operator (Optional)
 
-If you plan to enable distributed tracing with Tempo (`tempo.enabled=true`), you must manually install the Tempo Operator by following the official documentation at https://grafana.com/docs/tempo/latest/setup/operator/#installation[]. There is currently no official Helm chart available for the Tempo Operator or its CRDs.
+If you plan to enable distributed tracing with Tempo (`tempo.enabled=true`), you must manually install the Tempo Operator. There is currently no official Helm chart available for the Tempo Operator or its CRDs, so manual installation is required. The Tempo Operator also requires cert-manager to be installed in your cluster. Additionally, this reference chart requires the `grafanaOperator` feature gate to be enabled for proper integration with Grafana.
+
+For more detailed installation instructions, refer to the [official Tempo Operator documentation](https://grafana.com/docs/tempo/latest/setup/operator/#installation).
+
+**Prerequisites:**
+- cert-manager must be installed in your cluster
+
+**Example installation steps:**
+
+1. Install the Tempo Operator:
+```bash
+$ kubectl apply -f https://github.com/grafana/tempo-operator/releases/download/v0.16.0/tempo-operator.yaml
+```
+2. Enable the `grafanaOperator` feature gate (required for integration with Grafana):
+```bash
+$ kubectl get cm tempo-operator-manager-config -n tempo-operator-system -o yaml | \
+    sed 's/^  *grafanaOperator: false$/      grafanaOperator: true/' | \
+    kubectl apply -f -
+```
+3. Restart the operator deployment to apply the configuration:
+```bash
+$ kubectl rollout restart deployment/tempo-operator-controller -n tempo-operator-system
+$ kubectl wait --for=condition=available --timeout=120s deployment/tempo-operator-controller -n tempo-operator-system
+```
 
 ### 4. Install the Helm Chart
 
