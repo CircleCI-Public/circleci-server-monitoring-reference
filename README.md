@@ -220,13 +220,13 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheusOperator.prometheusConfigReloader.image.repository | string | `"quay.io/prometheus-operator/prometheus-config-reloader"` | Image repository for Prometheus Config Reloader. |
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.81.0"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
+| tempo.customConfig | object | `{}` | Add any custom Tempo configurations you require here. This should be a YAML object of additional settings for Tempo. |
 | tempo.enabled | string | `"-"` | Enable Tempo distributed tracing Requires manual installation of Tempo Operator Set to true to enable, false to disable, "-" to use global default |
 | tempo.resources | object | `{"limits":{"cpu":"1000m","memory":"2Gi"},"requests":{"cpu":"500m","memory":"1Gi"}}` | Resource requirements for Tempo pods Adjust based on your trace volume and cluster capacity |
 | tempo.resources.limits.cpu | string | `"1000m"` | Maximum CPU Tempo pods can use |
 | tempo.resources.limits.memory | string | `"2Gi"` | Maximum memory Tempo pods can use |
 | tempo.resources.requests.cpu | string | `"500m"` | Minimum CPU guaranteed to Tempo pods |
 | tempo.resources.requests.memory | string | `"1Gi"` | Minimum memory guaranteed to Tempo pods |
-| tempo.retentionPeriod | string | `"24h"` | Trace retention period How long to keep trace data before deletion |
 | tempo.storage | object | `{"traces":{"backend":"memory","size":"20Gi"}}` | Storage configuration for trace data |
 | tempo.storage.traces.backend | string | `"memory"` | Storage backend for traces Default: in-memory storage (traces lost on pod restart) Suitable for development/testing environments only |
 | tempo.storage.traces.size | string | `"20Gi"` | Storage volume size For memory/pv: actual volume size For cloud backends: size of WAL (Write-Ahead Log) volume Increase for higher trace volumes or longer retention |

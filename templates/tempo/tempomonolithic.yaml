@@ -32,24 +32,14 @@ spec:
       {{- end }}
   {{- end }}
 
-  # TODO: https://circleci.atlassian.net/browse/ONPREM-2157
-  #  observability:
-  #    grafana:
-  #      dataSource:
-  #        enabled: true
+  observability:
+    grafana:
+      dataSource:
+        enabled: true
 
+  {{- with .Values.tempo.customConfig }}
   extraConfig:
-    tempo:
-      limits_config:
-        retention_period: {{ .Values.tempo.retentionPeriod }}
-      compactor:
-        ring:
-          kvstore:
-            store: inmemory
-      ingester:
-        lifecycler:
-          ring:
-            kvstore:
-              store: inmemory
+    {{ toYaml . | nindent 4 }}
+  {{- end }}
 
 {{- end }}
