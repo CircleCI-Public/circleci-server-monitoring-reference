@@ -23,6 +23,7 @@ spec:
 
       {{- if eq .backend "s3" }}
       s3:
+        credentialMode: {{ .s3.credentialMode }}
         secret: {{ .s3.secret }}
       {{- end }}
 

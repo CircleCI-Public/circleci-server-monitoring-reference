@@ -49,12 +49,16 @@ tests:
     set:
       tempo.enabled: true
       tempo.storage.traces.backend: s3
+      tempo.storage.traces.s3.credentialMode: token-cco
       tempo.storage.traces.s3.secret: my-s3-secret
       tempo.storage.traces.size: 100Gi
     asserts:
       - equal:
           path: spec.storage.traces.backend
           value: s3
+      - equal:
+          path: spec.storage.traces.s3.credentialMode
+          value: token-cco
       - equal:
           path: spec.storage.traces.s3.secret
           value: my-s3-secret
