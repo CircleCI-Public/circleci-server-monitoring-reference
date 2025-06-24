@@ -180,10 +180,13 @@ tempo:
       # Choose based on your CircleCI server deployment location:
 
       # -- AWS S3 (use if CircleCI server is on AWS)
+      # backend: s3
       # s3:
+      #   credentialMode: "<static|token|token-cco>"
       #   secret: tempo-s3-secret
 
       # -- Google Cloud Storage (use if CircleCI server is on GCP)
+      # backend: gcs
       # gcs:
       #   secret: tempo-gcs-secret
 
