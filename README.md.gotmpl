@@ -155,6 +155,16 @@ grafana:
 ```
 > **_NOTE:_** Use a custom storage class with a 'Retain' policy to allow for data retention even after uninstalling the chart.
 
+#### Tempo Storage Configuration
+
+When Tempo is enabled, it's recommended to use object storage instead of in-memory storage for trace persistence. Compatible storage backends for Tempo and CircleCI server include S3, GCS, and MinIO.
+
+Configure object storage using the `tempo.storage` values detailed in the [values](#Values) section below.
+
+> **_NOTE:_** For production deployments, object storage provides better durability and scalability compared to in-memory storage, which loses traces on pod restarts.
+
+For detailed configuration options, consult the [official Tempo documentation](https://grafana.com/docs/tempo/latest/setup/operator/object-storage/).
+
 ## Modifying or Adding Grafana Dashboards
 
 The default dashboards are located in the `dashboards` directory of the reference chart. To add new dashboards or modify existing ones, follow these steps.
