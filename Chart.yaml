@@ -1,7 +1,7 @@
 apiVersion: v2
 name: server-monitoring-stack
 description: A reference Helm chart for setting up a monitoring stack for CircleCI server
-version: 0.1.0-alpha.6
+version: 0.1.0-alpha.7
 dependencies:
   - name: prometheus-operator-crds
     version: 19.0.0
