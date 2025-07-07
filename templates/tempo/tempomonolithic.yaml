@@ -45,6 +45,9 @@ spec:
     grafana:
       dataSource:
         enabled: true
+        instanceSelector:
+          matchLabels:
+            dashboards: grafana
 
   {{- with .Values.tempo.customConfig }}
   extraConfig:
