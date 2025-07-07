@@ -86,9 +86,13 @@ tests:
   - it: should configure pv backend
     set:
       tempo.enabled: true
+      tempo.storage.traces.storageClassName: "my-custom-storage"
       tempo.storage.traces.backend: pv
       tempo.storage.traces.size: 50Gi
     asserts:
+      - equal:
+          path: spec.storage.traces.storageClassName
+          value: "my-custom-storage"
       - equal:
           path: spec.storage.traces.backend
           value: pv

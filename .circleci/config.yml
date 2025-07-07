@@ -212,7 +212,7 @@ jobs:
             kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.18.0/cert-manager.yaml
             kubectl wait --for=condition=available --timeout=30s deployment/cert-manager-webhook -n cert-manager
 
-            kubectl apply -f https://github.com/grafana/tempo-operator/releases/download/v0.16.0/tempo-operator.yaml
+            kubectl apply -f https://github.com/grafana/tempo-operator/releases/download/v0.17.0/tempo-operator.yaml
             kubectl get cm tempo-operator-manager-config -n tempo-operator-system -o yaml | \
               sed 's/^  *grafanaOperator: false$/      grafanaOperator: true/' | \
               kubectl apply -f -

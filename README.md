@@ -76,7 +76,7 @@ For more detailed installation instructions, refer to the [official Tempo Operat
 
 1. Install the Tempo Operator:
 ```bash
-$ kubectl apply -f https://github.com/grafana/tempo-operator/releases/download/v0.16.0/tempo-operator.yaml
+$ kubectl apply -f https://github.com/grafana/tempo-operator/releases/download/v0.17.0/tempo-operator.yaml
 ```
 2. Enable the `grafanaOperator` feature gate (required for integration with Grafana):
 ```bash
@@ -255,14 +255,20 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
 | tempo.customConfig | object | `{}` | Add any custom Tempo configurations you require here. This should be a YAML object of additional settings for Tempo. |
 | tempo.enabled | string | `"-"` | Enable Tempo distributed tracing Requires manual installation of Tempo Operator Set to true to enable, false to disable, "-" to use global default |
+| tempo.podSecurityContext | object | `{"fsGroup":10001,"runAsGroup":10001,"runAsNonRoot":true,"runAsUser":10001}` | Pod security context for Tempo containers |
+| tempo.podSecurityContext.fsGroup | int | `10001` | Filesystem group ID for volume ownership and permissions |
+| tempo.podSecurityContext.runAsGroup | int | `10001` | Group ID to run the container processes |
+| tempo.podSecurityContext.runAsNonRoot | bool | `true` | Run containers as non-root user |
+| tempo.podSecurityContext.runAsUser | int | `10001` | User ID to run the container processes |
 | tempo.resources | object | `{"limits":{"cpu":"1000m","memory":"2Gi"},"requests":{"cpu":"500m","memory":"1Gi"}}` | Resource requirements for Tempo pods Adjust based on your trace volume and cluster capacity |
 | tempo.resources.limits.cpu | string | `"1000m"` | Maximum CPU Tempo pods can use |
 | tempo.resources.limits.memory | string | `"2Gi"` | Maximum memory Tempo pods can use |
 | tempo.resources.requests.cpu | string | `"500m"` | Minimum CPU guaranteed to Tempo pods |
 | tempo.resources.requests.memory | string | `"1Gi"` | Minimum memory guaranteed to Tempo pods |
-| tempo.storage | object | `{"traces":{"backend":"memory","size":"20Gi"}}` | Storage configuration for trace data |
+| tempo.storage | object | `{"traces":{"backend":"memory","size":"20Gi","storageClassName":""}}` | Storage configuration for trace data |
 | tempo.storage.traces.backend | string | `"memory"` | Storage backend for traces Default: in-memory storage (traces lost on pod restart) Suitable for development/testing environments only |
 | tempo.storage.traces.size | string | `"20Gi"` | Storage volume size For memory/pv: actual volume size For cloud backends: size of WAL (Write-Ahead Log) volume Increase for higher trace volumes or longer retention |
+| tempo.storage.traces.storageClassName | string | `""` | Storage class for persistent volume provisioner. Applies to both persistent volume and object storage backends. |
 
 ## Releases
 

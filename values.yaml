@@ -195,6 +195,19 @@ tempo:
       # For cloud backends: size of WAL (Write-Ahead Log) volume
       # Increase for higher trace volumes or longer retention
       size: 20Gi
+      # -- Storage class for persistent volume provisioner. Applies to both
+      # persistent volume and object storage backends.
+      storageClassName: ""
+  # -- Pod security context for Tempo containers
+  podSecurityContext:
+    # -- Run containers as non-root user
+    runAsNonRoot: true
+    # -- User ID to run the container processes
+    runAsUser: 10001
+    # -- Group ID to run the container processes
+    runAsGroup: 10001
+    # -- Filesystem group ID for volume ownership and permissions
+    fsGroup: 10001
   # -- Add any custom Tempo configurations you require here. This should be a
   # YAML object of additional settings for Tempo.
   customConfig: {}
