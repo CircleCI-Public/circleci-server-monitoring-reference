@@ -11,4 +11,5 @@ grafana:
 tempo:
   storage:
     traces:
+      storageClassName: "custom-storage"
       backend: pv

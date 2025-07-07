@@ -20,6 +20,9 @@ spec:
     traces:
       backend: {{ .backend }}
       size: {{ .size }}
+      {{- if .storageClassName }}
+      storageClassName: {{ .storageClassName }}
+      {{- end }}
 
       {{- if eq .backend "s3" }}
       s3:
@@ -31,6 +34,11 @@ spec:
       gcs:
         secret: {{ .gcs.secret }}
       {{- end }}
+  {{- end }}
+
+  {{- with .Values.tempo.podSecurityContext }}
+  podSecurityContext:
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 
   observability:
