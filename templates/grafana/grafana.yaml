@@ -106,7 +106,7 @@ spec:
       mode: "console"
     auth:
       disable_login_form: "false"
-    {{- with .customConfig }}
+    {{- with .extraConfig }}
     {{ toYaml . | nindent 4 }}
     {{- end }}
 

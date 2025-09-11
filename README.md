@@ -207,10 +207,10 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.credentials.adminPassword | string | `"admin"` | Grafana admin password. Change from default for production environments. |
 | grafana.credentials.adminUser | string | `"admin"` | Grafana admin username. |
 | grafana.credentials.existingSecretName | string | `""` | Name of an existing secret for Grafana credentials. Leave empty to create a new secret. |
-| grafana.customConfig | string | `""` | Add any custom Grafana configurations you require here. This should be a YAML-formatted string of additional settings for Grafana. |
 | grafana.dashboards.jsonDirectory | string | `"dashboards"` | The directory containing JSON files for Grafana dashboards. |
 | grafana.datasource.jsonData.timeInterval | string | `"5s"` | The time interval for Grafana to poll Prometheus. Specifies the frequency of data requests. |
 | grafana.enabled | string | `"-"` |  |
+| grafana.extraConfig | string | `""` | Add any custom Grafana configurations you require here. This should be a YAML-formatted string of additional settings for Grafana. |
 | grafana.image.repository | string | `"grafana/grafana"` | Image repository for Grafana. |
 | grafana.image.tag | string | `"12.0.0-security-01"` | Tag for the Grafana image. |
 | grafana.ingress.className | string | `""` | Specifies the class of the Ingress controller. Required if the Kubernetes cluster includes multiple Ingress controllers. |
@@ -253,8 +253,8 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheusOperator.prometheusConfigReloader.image.repository | string | `"quay.io/prometheus-operator/prometheus-config-reloader"` | Image repository for Prometheus Config Reloader. |
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.81.0"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
-| tempo.customConfig | object | `{}` | Add any custom Tempo configurations you require here. This should be a YAML object of additional settings for Tempo. |
 | tempo.enabled | string | `"-"` | Enable Tempo distributed tracing Requires manual installation of Tempo Operator Set to true to enable, false to disable, "-" to use global default |
+| tempo.extraConfig | object | `{}` | Add any custom Tempo configurations you require here. This should be a YAML object of additional settings for Tempo. |
 | tempo.podSecurityContext | object | `{"fsGroup":10001,"runAsGroup":10001,"runAsNonRoot":true,"runAsUser":10001}` | Pod security context for Tempo containers |
 | tempo.podSecurityContext.fsGroup | int | `10001` | Filesystem group ID for volume ownership and permissions |
 | tempo.podSecurityContext.runAsGroup | int | `10001` | Group ID to run the container processes |
