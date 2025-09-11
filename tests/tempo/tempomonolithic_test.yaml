@@ -103,7 +103,7 @@ tests:
   - it: should configure custom distributor config
     set:
       tempo.enabled: true
-      tempo.customConfig:
+      tempo.extraConfig:
         distributor:
           log_received_traces: true
     asserts:

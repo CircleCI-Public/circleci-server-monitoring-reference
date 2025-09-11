@@ -124,7 +124,7 @@ grafana:
       secretName: ""
   # -- Add any custom Grafana configurations you require here. This should be a
   # YAML-formatted string of additional settings for Grafana.
-  customConfig: ""
+  extraConfig: ""
   persistence:
     # -- Enable persistent storage for Grafana.
     enabled: false
@@ -210,4 +210,4 @@ tempo:
     fsGroup: 10001
   # -- Add any custom Tempo configurations you require here. This should be a
   # YAML object of additional settings for Tempo.
-  customConfig: {}
+  extraConfig: {}
