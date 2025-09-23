@@ -37,8 +37,10 @@ kubeconform() {
 help_lint_dashboards="Lint the Grafana dashboards using dashboard-linter."
 lint-dashboards() {
     install-go-bin "github.com/grafana/dashboard-linter@latest"
-
-    ./bin/dashboard-linter lint --strict --verbose dashboards/*
+    
+    for dashboard in dashboards/*.json; do
+        ./bin/dashboard-linter lint --strict --verbose "$dashboard"
+    done
 }
 
 # This variable is used, but shellcheck can't tell.

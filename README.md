@@ -16,7 +16,7 @@ This repository is currently under active development and is not yet a supported
 
 A reference Helm chart for setting up a monitoring stack for CircleCI server
 
-![Version: 0.1.0-alpha.8](https://img.shields.io/badge/Version-0.1.0--alpha.8-informational?style=flat-square)
+![Version: 0.1.0-alpha.9](https://img.shields.io/badge/Version-0.1.0--alpha.9-informational?style=flat-square)
 
 ## Installing the Monitoring Stack
 
@@ -58,7 +58,7 @@ Before installing the full chart, you must first install the dependency subchart
 Install the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
-$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.8 -n <your-server-namespace>
+$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.9 -n <your-server-namespace>
 ```
 
 > **_NOTE:_** It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
@@ -95,7 +95,7 @@ $ kubectl wait --for=condition=available --timeout=120s deployment/tempo-operato
 Next, install the Helm chart using the following command:
 
 ```bash
-$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.8 -n <your-server-namespace>
+$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.9 -n <your-server-namespace>
 ```
 
 ### 5. Verify Prometheus Is Up and Targeting Telegraf
@@ -243,7 +243,8 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheus.serviceMonitor.endpoints[0].port | string | `"prometheus-client"` | Port name for the Prometheus client service. |
 | prometheus.serviceMonitor.endpoints[0].relabelings[0].action | string | `"labeldrop"` |  |
 | prometheus.serviceMonitor.endpoints[0].relabelings[0].regex | string | `"(container|endpoint|namespace|pod|service)"` |  |
-| prometheus.serviceMonitor.selectorLabels | object | `{"app.kubernetes.io/instance":"circleci-server","app.kubernetes.io/name":"telegraf"}` | Labels to select ServiceMonitors for scraping metrics. By default, it's configured to scrape the existing Telegraf deployment in CircleCI server. |
+| prometheus.serviceMonitor.selectorExpressions | list | `[{"key":"app.kubernetes.io/name","operator":"In","values":["telegraf","tempo"]}]` | Match ServiceMonitors with specific names |
+| prometheus.serviceMonitor.selectorLabels | object | `{"app.kubernetes.io/instance":"circleci-server"}` | Labels to select ServiceMonitors for scraping metrics. By default, it's configured to scrape the existing Telegraf and Tempo deployments in CircleCI server. |
 | prometheus.serviceMonitor.selectorNamespaces | list | `[]` | Namespaces to look for ServiceMonitor objects. Set this if the CircleCI server monitoring stack is deploying in a different namespace than the actual CircleCI server installation. |
 | prometheusOperator.crds.annotations."helm.sh/resource-policy" | string | `"keep"` |  |
 | prometheusOperator.enabled | string | `"-"` |  |
@@ -265,6 +266,9 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | tempo.resources.limits.memory | string | `"2Gi"` | Maximum memory Tempo pods can use |
 | tempo.resources.requests.cpu | string | `"500m"` | Minimum CPU guaranteed to Tempo pods |
 | tempo.resources.requests.memory | string | `"1Gi"` | Minimum memory guaranteed to Tempo pods |
+| tempo.serviceMonitor | object | `{"enabled":true,"endpoints":[{"interval":"30s","path":"/metrics","port":"http"}]}` | Exposes Tempo RED metrics for Prometheus |
+| tempo.serviceMonitor.enabled | bool | `true` | Enable ServiceMonitor creation for Tempo metrics |
+| tempo.serviceMonitor.endpoints | list | `[{"interval":"30s","path":"/metrics","port":"http"}]` | Endpoints configuration for metrics scraping |
 | tempo.storage | object | `{"traces":{"backend":"memory","size":"20Gi","storageClassName":""}}` | Storage configuration for trace data |
 | tempo.storage.traces.backend | string | `"memory"` | Storage backend for traces Default: in-memory storage (traces lost on pod restart) Suitable for development/testing environments only |
 | tempo.storage.traces.size | string | `"20Gi"` | Storage volume size For memory/pv: actual volume size For cloud backends: size of WAL (Write-Ahead Log) volume Increase for higher trace volumes or longer retention |
