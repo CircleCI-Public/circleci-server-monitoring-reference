@@ -16,7 +16,7 @@ This repository is currently under active development and is not yet a supported
 
 A reference Helm chart for setting up a monitoring stack for CircleCI server
 
-![Version: 0.1.0-alpha.8](https://img.shields.io/badge/Version-0.1.0--alpha.8-informational?style=flat-square)
+![Version: 0.1.0-alpha.9](https://img.shields.io/badge/Version-0.1.0--alpha.9-informational?style=flat-square)
 
 ## Installing the Monitoring Stack
 
@@ -58,7 +58,7 @@ Before installing the full chart, you must first install the dependency subchart
 Install the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
-$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.8 -n <your-server-namespace>
+$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.9 -n <your-server-namespace>
 ```
 
 > **_NOTE:_** It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
@@ -95,7 +95,7 @@ $ kubectl wait --for=condition=available --timeout=120s deployment/tempo-operato
 Next, install the Helm chart using the following command:
 
 ```bash
-$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.8 -n <your-server-namespace>
+$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.9 -n <your-server-namespace>
 ```
 
 ### 5. Verify Prometheus Is Up and Targeting Telegraf
