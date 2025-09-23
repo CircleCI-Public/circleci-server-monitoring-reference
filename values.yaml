@@ -212,7 +212,10 @@ tempo:
     runAsGroup: 10001
     # -- Filesystem group ID for volume ownership and permissions
     fsGroup: 10001
-  
+  # -- Add any custom Tempo configurations you require here. This should be a
+  # YAML object of additional settings for Tempo.
+  extraConfig: {}
+  # -- Exposes Tempo RED metrics for Prometheus
   serviceMonitor:
     # -- Enable ServiceMonitor creation for Tempo metrics
     enabled: true
