@@ -38,10 +38,14 @@ prometheus:
     tag: v3.2.1
   serviceMonitor:
     # -- Labels to select ServiceMonitors for scraping metrics.
-    # By default, it's configured to scrape the existing Telegraf deployment in CircleCI server.
+    # By default, it's configured to scrape the existing Telegraf and Tempo deployments in CircleCI server.
     selectorLabels:
       app.kubernetes.io/instance: circleci-server
-      app.kubernetes.io/name: telegraf
+    # -- Match ServiceMonitors with specific names
+    selectorExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values: ["telegraf", "tempo"]
     # -- Namespaces to look for ServiceMonitor objects. Set this if the CircleCI
     # server monitoring stack is deploying in a different namespace than the
     # actual CircleCI server installation.
@@ -208,6 +212,12 @@ tempo:
     runAsGroup: 10001
     # -- Filesystem group ID for volume ownership and permissions
     fsGroup: 10001
-  # -- Add any custom Tempo configurations you require here. This should be a
-  # YAML object of additional settings for Tempo.
-  extraConfig: {}
+  
+  serviceMonitor:
+    # -- Enable ServiceMonitor creation for Tempo metrics
+    enabled: true
+    # -- Endpoints configuration for metrics scraping
+    endpoints:
+      - port: http
+        path: /metrics
+        interval: 30s

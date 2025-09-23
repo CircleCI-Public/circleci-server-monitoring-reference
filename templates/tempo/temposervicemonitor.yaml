@@ -1,0 +1,24 @@
+{{- include "prometheus.enabled" . -}}
+{{- if .prometheusEnabled }}
+{{- if .Values.tempo.serviceMonitor.enabled }}
+{{- $name := include "server-monitoring.fullname" . -}}
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ $name }}-tempo
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ $name }}-tempo
+    app.kubernetes.io/instance: circleci-server
+    app.kubernetes.io/name: tempo
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: tempo
+      app.kubernetes.io/instance: {{ $name }}-tempo
+      app.kubernetes.io/name: tempo-monolithic
+  endpoints:
+    {{- toYaml .Values.tempo.serviceMonitor.endpoints | nindent 4 }}
+{{- end }}
+{{- end }}
