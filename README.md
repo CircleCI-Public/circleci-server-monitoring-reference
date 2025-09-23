@@ -243,7 +243,8 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheus.serviceMonitor.endpoints[0].port | string | `"prometheus-client"` | Port name for the Prometheus client service. |
 | prometheus.serviceMonitor.endpoints[0].relabelings[0].action | string | `"labeldrop"` |  |
 | prometheus.serviceMonitor.endpoints[0].relabelings[0].regex | string | `"(container|endpoint|namespace|pod|service)"` |  |
-| prometheus.serviceMonitor.selectorLabels | object | `{"app.kubernetes.io/instance":"circleci-server","app.kubernetes.io/name":"telegraf"}` | Labels to select ServiceMonitors for scraping metrics. By default, it's configured to scrape the existing Telegraf deployment in CircleCI server. |
+| prometheus.serviceMonitor.selectorExpressions | list | `[{"key":"app.kubernetes.io/name","operator":"In","values":["telegraf","tempo"]}]` | Match ServiceMonitors with specific names |
+| prometheus.serviceMonitor.selectorLabels | object | `{"app.kubernetes.io/instance":"circleci-server"}` | Labels to select ServiceMonitors for scraping metrics. By default, it's configured to scrape the existing Telegraf and Tempo deployments in CircleCI server. |
 | prometheus.serviceMonitor.selectorNamespaces | list | `[]` | Namespaces to look for ServiceMonitor objects. Set this if the CircleCI server monitoring stack is deploying in a different namespace than the actual CircleCI server installation. |
 | prometheusOperator.crds.annotations."helm.sh/resource-policy" | string | `"keep"` |  |
 | prometheusOperator.enabled | string | `"-"` |  |
@@ -254,7 +255,6 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.81.0"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
 | tempo.enabled | string | `"-"` | Enable Tempo distributed tracing Requires manual installation of Tempo Operator Set to true to enable, false to disable, "-" to use global default |
-| tempo.extraConfig | object | `{}` | Add any custom Tempo configurations you require here. This should be a YAML object of additional settings for Tempo. |
 | tempo.podSecurityContext | object | `{"fsGroup":10001,"runAsGroup":10001,"runAsNonRoot":true,"runAsUser":10001}` | Pod security context for Tempo containers |
 | tempo.podSecurityContext.fsGroup | int | `10001` | Filesystem group ID for volume ownership and permissions |
 | tempo.podSecurityContext.runAsGroup | int | `10001` | Group ID to run the container processes |
@@ -265,6 +265,8 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | tempo.resources.limits.memory | string | `"2Gi"` | Maximum memory Tempo pods can use |
 | tempo.resources.requests.cpu | string | `"500m"` | Minimum CPU guaranteed to Tempo pods |
 | tempo.resources.requests.memory | string | `"1Gi"` | Minimum memory guaranteed to Tempo pods |
+| tempo.serviceMonitor.enabled | bool | `true` | Enable ServiceMonitor creation for Tempo metrics |
+| tempo.serviceMonitor.endpoints | list | `[{"interval":"30s","path":"/metrics","port":"http"}]` | Endpoints configuration for metrics scraping |
 | tempo.storage | object | `{"traces":{"backend":"memory","size":"20Gi","storageClassName":""}}` | Storage configuration for trace data |
 | tempo.storage.traces.backend | string | `"memory"` | Storage backend for traces Default: in-memory storage (traces lost on pod restart) Suitable for development/testing environments only |
 | tempo.storage.traces.size | string | `"20Gi"` | Storage volume size For memory/pv: actual volume size For cloud backends: size of WAL (Write-Ahead Log) volume Increase for higher trace volumes or longer retention |
