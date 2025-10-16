@@ -115,9 +115,9 @@ install-plugin() {
     name="${1}"
     repo="${2}"
 
-    if ! helm plugin list | grep ${name} >/dev/null; then
-        echo "Installing helm ${name}"
-        helm plugin install "${repo}"
+    if ! helm plugin list | grep "$name" >/dev/null; then
+        echo "Installing helm $name"
+        helm plugin install "$repo"
     fi
 }
 
