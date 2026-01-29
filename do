@@ -56,7 +56,7 @@ help_unit_tests="Run helm unittest"
 unit-tests() {
     check-helm
 
-    install-plugin unittest https://github.com/helm-unittest/helm-unittest.git
+    install-plugin unittest  https://github.com/helm-unittest/helm-unittest.git 
 
     helm unittest -f 'tests/**/*_test.yaml' . "$@"
 }
@@ -117,7 +117,14 @@ install-plugin() {
 
     if ! helm plugin list | grep "$name" >/dev/null; then
         echo "Installing helm $name"
-        helm plugin install "$repo"
+        helm plugin install "$repo" 2> "${name}-install-failure"  || 
+        if grep -q "verify=false" "${name}-install-failure"; then 
+          echo "plugin ${name} does not support verification, disabling verification"
+          helm plugin install --verify=false "$repo" 
+        else
+          cat ${name}-install-failure
+          exit 1
+        fi
     fi
 }
 
