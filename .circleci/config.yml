@@ -82,6 +82,7 @@ jobs:
     executor: deploy
     steps:
       - checkout
+      - run: helm version
       - run: ./do unit-tests
       - notify_failing_main
 
