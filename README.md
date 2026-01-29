@@ -29,6 +29,8 @@ A reference Helm chart for setting up a monitoring stack for CircleCI server
 
 ### 1. Configure Server for the Monitoring Stack
 
+#### Metrics
+
 To set up monitoring for a CircleCI server instance, you need to configure Telegraf to set up a Prometheus client and expose a metrics endpoint. Add the following configuration to the CircleCI **server** Helm chart values:
 
 ```yaml
@@ -40,6 +42,33 @@ telegraf:
       - prometheus_client:
           listen: ":9273"
 ```
+
+#### Tracing
+
+To setup trace support for a CircleCI server instance you will need to configure the OpenTelemetry collector to consume trace data and export it to the tempo deployment of the monitoring tack. Add the following configuration to the CircleCI **server** Helm chart values:
+
+```yaml
+opentelemetry-collector:
+    config:
+        exporters:
+            otlp:
+                endpoint: << your Tempo deployment DNS here >>
+            tls:
+                insecure: true
+        service:
+            pipelines:
+                traces:
+                    receivers: ["otlp"]
+                    processors: ["filters/traces_lowSignal", "batch"]
+                    exporters: ["otlp"]
+```
+
+The Tempo deployment DNS will follow the standard kubernetes DNS structure of `<deployment name>.<deployment-namespace>.svc.cluster.local`. By default the deployment will listen on port `4317` for incoming trace data.
+
+Further details for how to configure the OpenTelemetry collector for tracing may be found in the [OpenTelemetry Collector Helm Chart documentation](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector)
+
+**Note**
+This tracing configuration is supported for server 4.9+. If using server <= 4.8 please refer to the [telegraf documentation](https://github.com/influxdata/telegraf/tree/master/plugins/outputs/opentelemetry) for how to configure trace collection.
 
 ### 3. Add Helm Repository
 
