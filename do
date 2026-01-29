@@ -56,7 +56,7 @@ help_unit_tests="Run helm unittest"
 unit-tests() {
     check-helm
 
-    install-plugin unittest https://github.com/helm-unittest/helm-unittest.git
+    install-plugin unittest  https://github.com/helm-unittest/helm-unittest.git 
 
     helm unittest -f 'tests/**/*_test.yaml' . "$@"
 }
