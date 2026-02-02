@@ -272,7 +272,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheus.serviceMonitor.endpoints[0].port | string | `"prometheus-client"` | Port name for the Prometheus client service. |
 | prometheus.serviceMonitor.endpoints[0].relabelings[0].action | string | `"labeldrop"` |  |
 | prometheus.serviceMonitor.endpoints[0].relabelings[0].regex | string | `"(container|endpoint|namespace|pod|service)"` |  |
-| prometheus.serviceMonitor.selectorExpressions | list | `[{"key":"app.kubernetes.io/name","operator":"In","values":["telegraf","tempo"]}]` | Match ServiceMonitors with specific names |
+| prometheus.serviceMonitor.selectorExpressions | list | `[{"key":"app.kubernetes.io/name","operator":"In","values":["tempo","opentelemetry-collector","tempo"]}]` | Match ServiceMonitors with specific names |
 | prometheus.serviceMonitor.selectorLabels | object | `{"app.kubernetes.io/instance":"circleci-server"}` | Labels to select ServiceMonitors for scraping metrics. By default, it's configured to scrape the existing Telegraf and Tempo deployments in CircleCI server. |
 | prometheus.serviceMonitor.selectorNamespaces | list | `[]` | Namespaces to look for ServiceMonitor objects. Set this if the CircleCI server monitoring stack is deploying in a different namespace than the actual CircleCI server installation. |
 | prometheusOperator.crds.annotations."helm.sh/resource-policy" | string | `"keep"` |  |
