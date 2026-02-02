@@ -45,7 +45,7 @@ prometheus:
     selectorExpressions:
       - key: app.kubernetes.io/name
         operator: In
-        values: ["telegraf", "tempo"]
+        values: ["tempo", "opentelemetry-collector", "tempo"]
     # -- Namespaces to look for ServiceMonitor objects. Set this if the CircleCI
     # server monitoring stack is deploying in a different namespace than the
     # actual CircleCI server installation.
