@@ -25,7 +25,7 @@ prometheusOperator:
       # -- Image repository for Prometheus Config Reloader.
       repository: quay.io/prometheus-operator/prometheus-config-reloader
       # -- Tag for the Prometheus Config Reloader image.
-      tag: v0.81.0
+      tag: v0.89.0
 
 prometheus:
   enabled: "-"
