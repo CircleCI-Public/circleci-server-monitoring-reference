@@ -14,7 +14,7 @@ executors:
     resource_class: medium
   go:
     docker:
-      - image: cimg/go:1.24.2
+      - image: cimg/go:1.26.0
     resource_class: medium
   linux-vm:
     machine:
