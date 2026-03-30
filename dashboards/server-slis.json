@@ -179,7 +179,8 @@
         }
       ],
       "title": "Max latency of creating pipelines",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Peak response time for pipeline creation requests."
     },
     {
       "datasource": {
@@ -303,7 +304,8 @@
         }
       ],
       "title": "API v2 5xx by method/route",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Top API v2 routes returning server errors (5xx) by method and route."
     },
     {
       "collapsed": false,
@@ -444,7 +446,8 @@
         }
       ],
       "title": "Workflow Messages Handled by Type",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Volume of workflow engine messages processed by type."
     },
     {
       "datasource": {
@@ -563,7 +566,8 @@
         }
       ],
       "title": "Number of handled messages",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Workflow messages split by success and failure."
     },
     {
       "collapsed": false,
@@ -707,7 +711,8 @@
           }
         }
       ],
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Peak config compilation latency in orb-service by result."
     },
     {
       "collapsed": false,
@@ -842,7 +847,8 @@
         }
       ],
       "title": "5xx By Route",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Server errors (5xx) on Insights API endpoints by route."
     },
     {
       "collapsed": false,
@@ -977,7 +983,8 @@
         }
       ],
       "title": "Response errors",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Webhook service non-OK gRPC responses by status and type."
     },
     {
       "collapsed": false,
@@ -1108,7 +1115,8 @@
         }
       ],
       "title": "Workflows-System",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Notification processing volume and email delivery counts by success."
     },
     {
       "datasource": {
@@ -1230,7 +1238,8 @@
         }
       ],
       "title": "Pipelines-System IngestionError",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Pipeline notification event ingestion errors."
     },
     {
       "collapsed": false,
@@ -1363,7 +1372,8 @@
         }
       ],
       "title": "Permission client calls error rate % by action excluding 4xx",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Server-side error rate for permission checks by action, excluding client errors (4xx)."
     },
     {
       "datasource": {
@@ -1485,7 +1495,8 @@
         }
       ],
       "title": "API Call Errors",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Non-success responses from the permissions API by route, method, and status."
     },
     {
       "datasource": {
@@ -1607,7 +1618,8 @@
         }
       ],
       "title": "Failed API calls",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Count of non-success permission API calls by method, route, and status code."
     },
     {
       "collapsed": false,
@@ -1743,7 +1755,8 @@
         }
       ],
       "title": "GitHub Rate Limit Percentage",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Percentage of GitHub API calls hitting rate limits by endpoint."
     },
     {
       "datasource": {
@@ -1882,7 +1895,8 @@
         }
       ],
       "title": "Timing - Providers HTTP calls (Avg)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Average and peak latency of outbound VCS provider API calls by endpoint."
     },
     {
       "collapsed": false,
@@ -2024,7 +2038,8 @@
         }
       ],
       "title": "Runner API - 500 HTTP Responses (Internal Server Errors)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Internal server errors (500) from the Runner API by route and method."
     },
     {
       "datasource": {
@@ -2142,7 +2157,8 @@
         }
       ],
       "title": "Runner Tasks - Claims (Linear Scale)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Runner task claim attempt rate (204) vs successful claim rate (200)."
     },
     {
       "collapsed": false,
@@ -2256,7 +2272,8 @@
         }
       ],
       "title": " Task Queue Depth",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Pending tasks in the distributor queue by executor type."
     },
     {
       "datasource": {
@@ -2425,7 +2442,8 @@
           }
         }
       ],
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Dispatcher job queue size by jobs, tasks, and keys."
     },
     {
       "datasource": {
@@ -2548,7 +2566,8 @@
           }
         }
       ],
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Server errors (5xx) on the distributor external API by route and method."
     },
     {
       "datasource": {
@@ -2670,7 +2689,8 @@
           }
         }
       ],
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Server errors (5xx) on the distributor internal API by route and method."
     },
     {
       "datasource": {
@@ -2792,7 +2812,8 @@
         }
       ],
       "title": "Back Pressure",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Docker provisioner jobs in backoff state by sub-class."
     },
     {
       "datasource": {
@@ -2914,7 +2935,8 @@
         }
       ],
       "title": "Machine Provisioner External API Request Errors",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Non-success responses from the machine provisioner external API by route and method."
     },
     {
       "datasource": {
@@ -3036,7 +3058,8 @@
         }
       ],
       "title": "Output Receiver Handled Requests (non 2xx)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Non-success responses from the output service receiver by route and status."
     },
     {
       "datasource": {
@@ -3158,7 +3181,8 @@
         }
       ],
       "title": "Output Internal Handled Requests (non 2xx)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Non-success responses from the output service internal API by route and status."
     },
     {
       "datasource": {
@@ -3280,7 +3304,8 @@
         }
       ],
       "title": "Output Public Handled Requests (non 2xx, 3xx)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Non-success responses from the output service public API, excluding redirects."
     },
     {
       "datasource": {
@@ -3428,7 +3453,8 @@
           }
         }
       ],
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Server errors (5xx) and client errors (4xx) from the step service receiver by route and method."
     },
     {
       "datasource": {
@@ -3550,7 +3576,8 @@
         }
       ],
       "title": "Step Internal API Request Errors (5xx)",
-      "type": "timeseries"
+      "type": "timeseries",
+      "description": "Server errors (5xx) from the step service internal API by route and method."
     }
   ],
   "refresh": "",

@@ -186,6 +186,7 @@
         "refId": "A"
        }
       ],
+      "description": "Tempo API request rate by status code.",
       "title": "API Requests per Second",
       "type": "timeseries"
      },
@@ -287,6 +288,7 @@
         "refId": "B"
        }
       ],
+      "description": "Tempo API latency percentiles (99th and 50th) by route in milliseconds.",
       "title": "API Latency by Route",
       "type": "timeseries"
      },
@@ -391,6 +393,7 @@
         "refId": "A"
        }
       ],
+      "description": "Tempo process CPU utilization.",
       "title": "CPU Usage",
       "type": "timeseries"
      },
@@ -482,6 +485,7 @@
         "refId": "A"
        }
       ],
+      "description": "Tempo process memory consumption.",
       "title": "Memory Usage",
       "type": "timeseries"
      },
@@ -574,6 +578,7 @@
         "refId": "A"
        }
       ],
+      "description": "Tempo service availability status.",
       "title": "Service Status",
       "type": "timeseries"
      }
