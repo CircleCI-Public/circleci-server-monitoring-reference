@@ -82,7 +82,7 @@ jobs:
     executor: deploy
     steps:
       - checkout
-      - run: 
+      - run:
           name: Update Helm
           command: |
             curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
@@ -152,7 +152,7 @@ jobs:
       - run:
           name: Install package_cloud
           command: |
-            sudo apt-get update && sudo apt-get install ruby-rubygems -y
+            sudo apt-get update && sudo apt-get install ruby-rubygems ruby-dev -y
             sudo gem install --no-document package_cloud
       - run:
           name: Publish Helm chart
@@ -232,8 +232,8 @@ jobs:
           command: kubectl get pods -w
           background: true
       - run:
-         name: Wait for Prometheus
-         command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/server-monitoring-prometheus --timeout=2m
+          name: Wait for Prometheus
+          command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/server-monitoring-prometheus --timeout=2m
       - run:
           name: Port-forward Prometheus
           command: kubectl port-forward svc/server-monitoring-prometheus 9090
