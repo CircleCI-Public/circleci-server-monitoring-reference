@@ -6,7 +6,7 @@ orbs:
 executors:
   deploy:
     docker:
-      - image: cimg/deploy:2025.01
+      - image: cimg/deploy:2026.02.1
     resource_class: medium
   gh:
     docker:
@@ -152,7 +152,7 @@ jobs:
       - run:
           name: Install package_cloud
           command: |
-            sudo apt-get update && sudo apt-get install ruby-rubygems -y
+            sudo apt-get update && sudo apt-get install ruby-rubygems ruby-dev -y
             sudo gem install --no-document package_cloud
       - run:
           name: Publish Helm chart
