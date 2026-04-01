@@ -82,7 +82,7 @@ jobs:
     executor: deploy
     steps:
       - checkout
-      - run: 
+      - run:
           name: Update Helm
           command: |
             curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
@@ -152,7 +152,7 @@ jobs:
       - run:
           name: Install package_cloud
           command: |
-            sudo apt-get update && sudo apt-get install ruby-rubygems -y
+            sudo apt-get update && sudo apt-get install ruby-rubygems ruby-dev -y
             sudo gem install --no-document package_cloud
       - run:
           name: Publish Helm chart
@@ -188,7 +188,7 @@ jobs:
       - run:
           name: Install MicroK8s and Helm
           command: |
-            sudo apt-get update && sudo apt install snapd=2.63+22.04ubuntu0.1 -y
+            sudo apt-get update && sudo apt install snapd=2.73+ubuntu22.04.1 -y
             sudo snap install microk8s --classic --channel=1.32
             sudo snap install helm --classic
             sudo microk8s enable dns
@@ -232,8 +232,8 @@ jobs:
           command: kubectl get pods -w
           background: true
       - run:
-         name: Wait for Prometheus
-         command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/server-monitoring-prometheus --timeout=2m
+          name: Wait for Prometheus
+          command: kubectl wait --for=jsonpath='{.subsets[*].addresses}' endpoints/server-monitoring-prometheus --timeout=2m
       - run:
           name: Port-forward Prometheus
           command: kubectl port-forward svc/server-monitoring-prometheus 9090
