@@ -9,8 +9,6 @@ exclusions:
     entries:
     - dashboard: Server SLIs
     - dashboard: Tempo Monitoring
-  panel-title-description-rule:
-    reason: "Ideally each panel should have a description, but right now that's not the case."
   uneditable-dashboard:
     reason: "The dashboard needs to be editable in order to make copies of it."
     entries:
