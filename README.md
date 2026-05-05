@@ -16,7 +16,7 @@ This repository is currently under active development and is not yet a supported
 
 A reference Helm chart for setting up a monitoring stack for CircleCI server
 
-![Version: 0.1.0-alpha.11](https://img.shields.io/badge/Version-0.1.0--alpha.11-informational?style=flat-square)
+![Version: 0.1.0-alpha.12](https://img.shields.io/badge/Version-0.1.0--alpha.12-informational?style=flat-square)
 
 ## Installing the Monitoring Stack
 
@@ -87,7 +87,7 @@ Before installing the full chart, you must first install the dependency subchart
 Install the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
-$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.11 -n <your-server-namespace>
+$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.12 -n <your-server-namespace>
 ```
 
 > **_NOTE:_** It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
@@ -124,7 +124,7 @@ $ kubectl wait --for=condition=available --timeout=120s deployment/tempo-operato
 Next, install the Helm chart using the following command:
 
 ```bash
-$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.11 -n <your-server-namespace>
+$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.12 -n <your-server-namespace>
 ```
 
 ### 5. Verify Prometheus Is Up and Targeting Telegraf
@@ -284,7 +284,8 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.81.0"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
 | tempo.enabled | string | `"-"` | Enable Tempo distributed tracing Requires manual installation of Tempo Operator Set to true to enable, false to disable, "-" to use global default |
-| tempo.extraConfig | object | `{}` | Add any custom Tempo configurations you require here. This should be a YAML object of additional settings for Tempo. |
+| tempo.extraConfig | object | `{"tempo":{"compactor":{"compaction":{"block_retention":"720h"}}}}` | Add any custom Tempo configurations you require here. This should be a YAML object of additional settings for Tempo. |
+| tempo.extraConfig.tempo.compactor.compaction.block_retention | string | `"720h"` | sets the primary retention period for trace data to 30 days |
 | tempo.podSecurityContext | object | `{"fsGroup":10001,"runAsGroup":10001,"runAsNonRoot":true,"runAsUser":10001}` | Pod security context for Tempo containers |
 | tempo.podSecurityContext.fsGroup | int | `10001` | Filesystem group ID for volume ownership and permissions |
 | tempo.podSecurityContext.runAsGroup | int | `10001` | Group ID to run the container processes |

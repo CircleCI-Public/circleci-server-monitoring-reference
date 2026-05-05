@@ -214,7 +214,12 @@ tempo:
     fsGroup: 10001
   # -- Add any custom Tempo configurations you require here. This should be a
   # YAML object of additional settings for Tempo.
-  extraConfig: {}
+  extraConfig:
+    tempo:
+      compactor:
+        compaction:
+          # -- sets the primary retention period for trace data to 30 days
+          block_retention: "720h"
   # -- Exposes Tempo RED metrics for Prometheus
   serviceMonitor:
     # -- Enable ServiceMonitor creation for Tempo metrics
