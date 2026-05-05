@@ -104,11 +104,12 @@ tests:
     set:
       tempo.enabled: true
       tempo.extraConfig:
-        distributor:
-          log_received_traces: true
+        tempo:
+          distributor:
+            log_received_traces: true
     asserts:
       - equal:
-          path: spec.extraConfig.distributor.log_received_traces
+          path: spec.extraConfig.tempo.distributor.log_received_traces
           value: true
 
   - it: should not create resource when disabled
