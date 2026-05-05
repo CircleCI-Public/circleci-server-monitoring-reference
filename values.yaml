@@ -217,7 +217,7 @@ tempo:
   extraConfig:
     compactor:
       compaction:
-        # sets the primary retention period for trace data to 30 days
+        # -- sets the primary retention period for trace data to 30 days
         block_retention: "720h"
   # -- Exposes Tempo RED metrics for Prometheus
   serviceMonitor:
