@@ -284,8 +284,8 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheusOperator.prometheusConfigReloader.image.tag | string | `"v0.81.0"` | Tag for the Prometheus Config Reloader image. |
 | prometheusOperator.replicas | int | `1` | Number of Prometheus Operator replicas to deploy. |
 | tempo.enabled | string | `"-"` | Enable Tempo distributed tracing Requires manual installation of Tempo Operator Set to true to enable, false to disable, "-" to use global default |
-| tempo.extraConfig | object | `{"compactor":{"compaction":{"block_retention":"720h"}}}` | Add any custom Tempo configurations you require here. This should be a YAML object of additional settings for Tempo. |
-| tempo.extraConfig.compactor.compaction.block_retention | string | `"720h"` | sets the primary retention period for trace data to 30 days |
+| tempo.extraConfig | object | `{"tempo":{"compactor":{"compaction":{"block_retention":"720h"}}}}` | Add any custom Tempo configurations you require here. This should be a YAML object of additional settings for Tempo. |
+| tempo.extraConfig.tempo.compactor.compaction.block_retention | string | `"720h"` | sets the primary retention period for trace data to 30 days |
 | tempo.podSecurityContext | object | `{"fsGroup":10001,"runAsGroup":10001,"runAsNonRoot":true,"runAsUser":10001}` | Pod security context for Tempo containers |
 | tempo.podSecurityContext.fsGroup | int | `10001` | Filesystem group ID for volume ownership and permissions |
 | tempo.podSecurityContext.runAsGroup | int | `10001` | Group ID to run the container processes |
