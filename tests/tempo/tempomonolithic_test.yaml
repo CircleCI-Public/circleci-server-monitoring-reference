@@ -100,6 +100,14 @@ tests:
           path: spec.storage.traces.size
           value: 50Gi
 
+  - it: should configure default data retention
+    set:
+      tempo.enabled: true
+    asserts:
+      - equal:
+          path: spec.extraConfig.tempo.compactor.compaction.block_retention
+          value: "720h"
+
   - it: should configure custom distributor config
     set:
       tempo.enabled: true
