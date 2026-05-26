@@ -151,7 +151,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(max_over_time(backplane_ring_http_request_upper{service=\"builds-service\", route=\"/v1/pipelines\"}[$__interval]))",
+          "expr": "max(max_over_time(backplane_ring_http_request{service=\"builds-service\", route=\"/v1/pipelines\"}[$__interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -167,7 +167,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(max_over_time(backplane_ring_http_request_upper{service=\"builds-service\", route=\"/v1/error-pipelines\"}[$__interval]))",
+          "expr": "max(max_over_time(backplane_ring_http_request{service=\"builds-service\", route=\"/v1/error-pipelines\"}[$__interval]))",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -292,7 +292,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sort_desc(topk(10, sum by(route, method) (circle_http_request_count{api_version=\"v2\", status_class=\"5xx\"}))) OR on() vector(0)",
+          "expr": "sort_desc(topk(10, sum by(route, method) (circle_http_request{api_version=\"v2\", status_class=\"5xx\"}))) OR on() vector(0)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -435,7 +435,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(message_type) (workflows_conductor_engine_handler_messages_timing_count)",
+          "expr": "sum by(messaging_message_type) (workflows_conductor_engine_handler_messages_timing)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -538,7 +538,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(success, message_type) (workflows_conductor_engine_handler_messages_timing_count{success=\"true\"})",
+          "expr": "sum by(rabbitmq_handle_success, messaging_message_type) (workflows_conductor_engine_handler_messages_timing{rabbitmq_handle_success=\"true\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -554,7 +554,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(success, message_type) (workflows_conductor_engine_handler_messages_timing_count{success!=\"true\"})",
+          "expr": "sum by(rabbitmq_handle_success, messaging_message_type) (workflows_conductor_engine_handler_messages_timing{rabbitmq_handle_success!=\"true\"})",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -667,7 +667,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(orb_service_grpc_request_upper{service=\"orb-service\", result=\"success\"})",
+          "expr": "max(max_over_time(orb_service_process_config{service=\"orb-service\"}[$__interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -683,7 +683,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(orb_service_grpc_request_upper{service=\"orb-service\", result!=\"success\"})",
+          "expr": "max(max_over_time(orb_service_resolve_orbs{service=\"orb-service\"}[$__interval]))",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -699,14 +699,14 @@
         {
           "id": "renameByRegex",
           "options": {
-            "regex": "(max\\(orb_service_grpc_request_upper{service=\"orb-service\", result=\"success\"}\\))",
+            "regex": "(max\\(max_over_time\\(orb_service_process_config{service=\"orb-service\"}\\[\\$__interval\\]\\)\\))",
             "renamePattern": "Max Successful Timing"
           }
         },
         {
           "id": "renameByRegex",
           "options": {
-            "regex": "(max\\(orb_service_grpc_request_upper{service=\"orb-service\", result!=\"success\"}\\))",
+            "regex": "(max\\(max_over_time\\(orb_service_resolve_orbs{service=\"orb-service\"}\\[\\$__interval\\]\\)\\))",
             "renamePattern": "Max Failed Timing"
           }
         }
@@ -836,7 +836,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(route) (circle_http_request_count{route=~\"/api/v2/insights/.*\", status_class=\"5xx\", deploy_environment=~\"(production|canary)\"}) OR on() vector(0)",
+          "expr": "sum by(route) (circle_http_request{route=~\"/api/v2/insights/.*\", status_class=\"5xx\", deploy_environment=~\"(production|canary)\"}) OR on() vector(0)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -972,7 +972,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(status, type) (grpc_response_count{service=\"webhook-service\", status!=\"ok\"}) OR on() vector(0)",
+          "expr": "sum by(status, type) (grpc_response{service=\"webhook-service\", status!=\"ok\"}) OR on() vector(0)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1087,7 +1087,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(type, success) (circle_workflow_notifications_message_processing_count)",
+          "expr": "sum by(type, success) (circle_workflow_notifications_message_processing)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1103,7 +1103,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(success) (circle_workflow_notifications_email_count)",
+          "expr": "sum by(success) (circle_workflow_notifications_email)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -1227,7 +1227,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "circle_backend_build_notify_pipelines_event_ingestion_error_error OR on() vector(0)",
+          "expr": "circle_legacy_notifier_pipeline_updated_event OR on() vector(0)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1359,7 +1359,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(action) (rate(circle_permissions_service_client_call_count{status!~\"(200|202|400|401|403)\"}[$__rate_interval])) OR on(action) vector(0) / sum by(action) (rate(circle_permissions_service_client_call_count{status!~\"(400|401|403)\"}[$__rate_interval])) OR on(action) vector(0)",
+          "expr": "sum by(action) (rate(circle_permissions_service_client_call{status!~\"(200|202|400|401|403)\"}[$__rate_interval])) OR on(action) vector(0) / sum by(action) (rate(circle_permissions_service_client_call{status!~\"(400|401|403)\"}[$__rate_interval])) OR on(action) vector(0)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -1484,7 +1484,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(route, method, status) (avg_over_time(circle_permissions_service_request_count{status!~\"2.*\"}[$__interval])) OR on() vector(0)",
+          "expr": "sum by(route, method, status) (avg_over_time(circle_permissions_service_request{status!~\"2.*\"}[$__interval])) OR on() vector(0)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1607,7 +1607,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(method, route, status) (circle_permissions_service_request_count{status!~\"(200|202|201)\"}) OR on() vector(0)",
+          "expr": "sum by(method, route, status) (circle_permissions_service_request{status!~\"(200|202|201)\"}) OR on() vector(0)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1743,7 +1743,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(provider_name, endpoint) (circle_domain_service_providers_rate_limit{provider_name=\"github\"}) / sum by(provider_name, endpoint) (circle_domain_service_provider_request_count{provider_name=\"github\"}) OR on() vector(0)",
+          "expr": "max by(endpoint) (circle_github_rate_limit) OR on() vector(0)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -1867,7 +1867,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "avg by(endpoint) (circle_domain_service_provider_request_mean)",
+          "expr": "avg by(endpoint) (circle_domain_service_provider_request)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1883,7 +1883,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max by(endpoint) (circle_domain_service_provider_request_upper)",
+          "expr": "max by(endpoint) (circle_domain_service_provider_request)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -2027,7 +2027,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "avg by(http_route, http_method) (circleci_runner_admin_handler_count{http_status_code=\"500\"}) OR on() vector(0)",
+          "expr": "avg by(http_route, http_method) (circleci_runner_admin_handler{http_status_code=\"500\"}) OR on() vector(0)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2129,7 +2129,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "rate(circleci_runner_admin_handler_count{http_route=~\".*/claim\", http_status_code=\"204\"}[$__rate_interval])",
+          "expr": "rate(circleci_runner_admin_handler{http_route=~\".*/claim\", http_status_code=\"204\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2145,7 +2145,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "rate(circleci_runner_admin_handler_count{http_route=~\".*/claim\", http_status_code=\"200\"}[$__rate_interval])",
+          "expr": "rate(circleci_runner_admin_handler{http_route=~\".*/claim\", http_status_code=\"200\"}[$__rate_interval])",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -2261,7 +2261,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max by(executor) (max_over_time(circleci_distributor_task_counts{executor!=\"runner\"}[$__interval]))",
+          "expr": "max by(executor) (max_over_time(circleci_distributor_task_complete_total{executor!=\"runner\"}[$__interval]))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2546,7 +2546,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(http_route, http_method, http_status_code, version) (circleci_distributor_handler_count{http_server_name!=\"admin\", mode=\"external\", http_status_code=~\"5.*\"}) OR on() vector(0)",
+          "expr": "sum by(http_route, http_method, http_status_code, version) (circleci_distributor_handler{http_server_name!=\"admin\", mode=\"external\", http_status_code=~\"5.*\"}) OR on() vector(0)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2669,7 +2669,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(http_route, http_method, http_status_code, version) (circleci_distributor_handler_count{http_server_name!=\"admin\", mode=\"internal\", http_status_code=~\"5.*\"}) OR on() vector(0)",
+          "expr": "sum by(http_route, http_method, http_status_code, version) (circleci_distributor_handler{http_server_name!=\"admin\", mode=\"internal\", http_status_code=~\"5.*\"}) OR on() vector(0)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2801,7 +2801,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(sub_class) (circleci_docker_provisioner_job_count{backoff=\"true\"}) OR on() vector(0)",
+          "expr": "sum by(sub_class) (circleci_docker_provisioner_handler{backoff=\"true\"}) OR on() vector(0)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2924,7 +2924,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(http_route, http_method, http_status_code, version) (circleci_machine_provisioner_handler_count{http_server_name!=\"admin\", mode=\"externalapi\", http_status_code!~\"2.*\", http_method!=\"OPTIONS\"}) OR on() vector(0)",
+          "expr": "sum by(http_route, http_method, http_status_code, version) (circleci_machine_provisioner_handler{http_server_name!=\"admin\", mode=\"externalapi\", http_status_code!~\"2.*\", http_method!=\"OPTIONS\"}) OR on() vector(0)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -2937,647 +2937,6 @@
       "title": "Machine Provisioner External API Request Errors",
       "type": "timeseries",
       "description": "Non-success responses from the machine provisioner external API by route and method."
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byValue",
-              "options": {
-                "op": "gte",
-                "reducer": "allIsZero",
-                "value": 0
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": true,
-                  "tooltip": false,
-                  "viz": false
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 114
-      },
-      "id": 24,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(http_route, http_status_code, http_method, version) (circleci_output_handler_count{mode=\"receiver\", http_status_code!~\"2.*\"})",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Output Receiver Handled Requests (non 2xx)",
-      "type": "timeseries",
-      "description": "Non-success responses from the output service receiver by route and status."
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byValue",
-              "options": {
-                "op": "gte",
-                "reducer": "allIsZero",
-                "value": 0
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": true,
-                  "tooltip": false,
-                  "viz": false
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 114
-      },
-      "id": 36,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "sum by(http_route, http_status_code, http_method, version) (circleci_output_handler_count{mode=\"internal\", http_status_code!~\"2.*\"}) OR on() vector(0)",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Output Internal Handled Requests (non 2xx)",
-      "type": "timeseries",
-      "description": "Non-success responses from the output service internal API by route and status."
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byValue",
-              "options": {
-                "op": "gte",
-                "reducer": "allIsZero",
-                "value": 0
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": true,
-                  "tooltip": false,
-                  "viz": false
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 122
-      },
-      "id": 37,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "sum by(http_route, http_status_code, http_method, version) (circleci_output_handler_count{mode=\"public\", http_route!=\"/ready\", http_status_code!~\"2.*\", http_status_code!=\"307\"}) OR on() vector(0)",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Output Public Handled Requests (non 2xx, 3xx)",
-      "type": "timeseries",
-      "description": "Non-success responses from the output service public API, excluding redirects."
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byValue",
-              "options": {
-                "op": "gte",
-                "reducer": "allIsZero",
-                "value": 0
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": true,
-                  "tooltip": false,
-                  "viz": false
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 122
-      },
-      "id": 38,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(http_route, http_method, http_status_code, version) (circleci_step_handler_count{http_server_name!=\"admin\", mode=\"receiver\", http_status_code=~\"5.*\"}) OR on() vector(0)",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(http_route, http_method, http_status_code, version) (circleci_step_handler_count{http_server_name!=\"admin\", mode=\"receiver\", http_status_code=~\"4.*\"}) OR vector(0)",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
-        }
-      ],
-      "title": "Step Receiver API Request Errors (5xx)",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "{http_method=\"POST\", http_route=\"/api/v2/step/output\", http_status_code=\"499\", version=\"1.0.9757-d437933\"}",
-            "renamePattern": ""
-          }
-        }
-      ],
-      "type": "timeseries",
-      "description": "Server errors (5xx) and client errors (4xx) from the step service receiver by route and method."
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byValue",
-              "options": {
-                "op": "gte",
-                "reducer": "allIsZero",
-                "value": 0
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": true,
-                  "tooltip": false,
-                  "viz": false
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 130
-      },
-      "id": 39,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "sum by(http_route, http_method, http_status_code, version) (circleci_step_handler_count{http_server_name!=\"admin\", mode=\"internal\", http_status_code=~\"5.*\", http_method!=\"options\"}) OR on() vector(0)",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Step Internal API Request Errors (5xx)",
-      "type": "timeseries",
-      "description": "Server errors (5xx) from the step service internal API by route and method."
     }
   ],
   "refresh": "",

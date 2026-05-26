@@ -31,17 +31,31 @@ A reference Helm chart for setting up a monitoring stack for CircleCI server
 
 #### Metrics
 
-To set up monitoring for a CircleCI server instance, you need to configure Telegraf to set up a Prometheus client and expose a metrics endpoint. Add the following configuration to the CircleCI **server** Helm chart values:
+CircleCI Server **4.10+** exports metrics via **opentelemetry-collector** (StatsD receiver → Prometheus exporter on port **9273**). The Telegraf `prometheus_client` output is no longer deployed.
+
+Add the following to the CircleCI **server** Helm chart values (adjust processors to match your chart defaults):
 
 ```yaml
-telegraf:
+opentelemetry-collector:
   config:
-    outputs:
-      - file:
-          files: ["stdout"]
-      - prometheus_client:
-          listen: ":9273"
+    exporters:
+      prometheus:
+        endpoint: 0.0.0.0:9273
+    receivers:
+      statsd:
+        endpoint: 0.0.0.0:8125
+        is_monotonic_counter: true
+    service:
+      pipelines:
+        metrics:
+          receivers: [statsd]
+          processors: [memory_limiter, batch]
+          exporters: [prometheus]
 ```
+
+Expose port **9273** on the collector Service (e.g. name `prom-metrics`) so Prometheus can scrape `/metrics`. The reference chart ServiceMonitor expects that port.
+
+**Server ≤4.9:** configure Telegraf `prometheus_client` on `:9273` instead; the bundled **Server SLIs** dashboard targets OTEL metric names on 4.10+.
 
 #### Tracing
 
