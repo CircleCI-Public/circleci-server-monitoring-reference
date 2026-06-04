@@ -31,9 +31,19 @@ A reference Helm chart for setting up a monitoring stack for CircleCI server
 
 #### Metrics
 
-CircleCI Server **4.10+** exports metrics via **opentelemetry-collector** (StatsD receiver → Prometheus exporter on port **9273**). The Telegraf `prometheus_client` output is no longer deployed.
+**CircleCI Server <=4.9** — configure Telegraf `prometheus_client` on port **9273** in the CircleCI **server** Helm chart values:
 
-Add the following to the CircleCI **server** Helm chart values (adjust processors to match your chart defaults):
+```yaml
+telegraf:
+  config:
+    outputs:
+      - file:
+          files: ["stdout"]
+      - prometheus_client:
+          listen: ":9273"
+```
+
+**CircleCI Server 4.10+** — metrics are exported by **opentelemetry-collector** (StatsD receiver → Prometheus exporter on **9273**). Add or align with your chart defaults:
 
 ```yaml
 opentelemetry-collector:
@@ -55,7 +65,32 @@ opentelemetry-collector:
 
 Expose port **9273** on the collector Service (e.g. name `prom-metrics`) so Prometheus can scrape `/metrics`. The reference chart ServiceMonitor expects that port.
 
-**Server ≤4.9:** configure Telegraf `prometheus_client` on `:9273` instead; the bundled **Server SLIs** dashboard targets OTEL metric names on 4.10+.
+#### Grafana dashboards (this chart)
+
+| Server version | Dashboard in Grafana | `serverMetricsProfile` |
+| --- | --- | --- |
+| <=4.9 (Telegraf) | **Server SLIs** | `legacy` or `both` (default) |
+| 4.10+ (OTEL) | **Server SLIs (4.10+)** | `server410` or `both` (default) |
+
+For **4.10+ / OTEL-only** installs, set the monitoring stack to provision only the OTEL dashboard:
+
+```yaml
+grafana:
+  dashboards:
+    serverMetricsProfile: server410
+```
+
+Legacy Telegraf installs:
+
+```yaml
+grafana:
+  dashboards:
+    serverMetricsProfile: legacy
+```
+
+Default `both` ships **Server SLIs** and **Server SLIs (4.10+)** plus other JSON dashboards (e.g. Tempo). Use one SLI dashboard in Grafana matching your Server version.
+
+The 4.10+ dashboard omits five panels that had no matching OTEL series in testing (output receiver/internal/public non-2xx, step receiver/internal 5xx). They remain on the legacy **Server SLIs** dashboard for <=4.9.
 
 #### Tracing
 
@@ -230,7 +265,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
    - Select **Export** in the upper right corner and then **Export as JSON**.
    - **Ensure that `Export the dashboard to use in another instance` is toggled on.**
 4. **Update the JSON File**:
-   - Download the file and replace the `./dashboards/server-slis.json` file with the updated copy.
+   - Download the file and replace the matching file under `./dashboards/` (`server-slis.json` for <=4.9, `server-slis-server4.10.json` for 4.10+ OTEL).
    - Run the following command to automatically validate the JSON and apply necessary updates:
      ```bash
      ./do validate-dashboards
@@ -251,6 +286,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.credentials.adminUser | string | `"admin"` | Grafana admin username. |
 | grafana.credentials.existingSecretName | string | `""` | Name of an existing secret for Grafana credentials. Leave empty to create a new secret. |
 | grafana.dashboards.jsonDirectory | string | `"dashboards"` | The directory containing JSON files for Grafana dashboards. |
+| grafana.dashboards.serverMetricsProfile | string | `"both"` | Which Server SLIs dashboard(s) to provision: `legacy` (Telegraf / <=4.9), `server410` (OTEL / 4.10+), or `both`. |
 | grafana.datasource.jsonData.timeInterval | string | `"5s"` | The time interval for Grafana to poll Prometheus. Specifies the frequency of data requests. |
 | grafana.enabled | string | `"-"` |  |
 | grafana.extraConfig | string | `""` | Add any custom Grafana configurations you require here. This should be a YAML-formatted string of additional settings for Grafana. |
