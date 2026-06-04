@@ -69,26 +69,16 @@ Expose port **9273** on the collector Service (e.g. name `prom-metrics`) so Prom
 
 | Server version | Dashboard in Grafana | `serverMetricsProfile` |
 | --- | --- | --- |
-| <=4.9 (Telegraf) | **Server SLIs** | `legacy` or `both` (default) |
-| 4.10+ (OTEL) | **Server SLIs (4.10+)** | `server410` or `both` (default) |
+| <=4.9 (Telegraf) | **Server SLIs** | `legacy` (default) |
+| 4.10+ (OTEL) | **Server SLIs (4.10+)** | `server410` |
 
-For **4.10+ / OTEL-only** installs, set the monitoring stack to provision only the OTEL dashboard:
+On **Server 4.10+**, set:
 
 ```yaml
 grafana:
   dashboards:
     serverMetricsProfile: server410
 ```
-
-Legacy Telegraf installs:
-
-```yaml
-grafana:
-  dashboards:
-    serverMetricsProfile: legacy
-```
-
-Default `both` ships **Server SLIs** and **Server SLIs (4.10+)** plus other JSON dashboards (e.g. Tempo). Use one SLI dashboard in Grafana matching your Server version.
 
 The 4.10+ dashboard omits five panels that had no matching OTEL series in testing (output receiver/internal/public non-2xx, step receiver/internal 5xx). They remain on the legacy **Server SLIs** dashboard for <=4.9.
 
@@ -286,7 +276,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.credentials.adminUser | string | `"admin"` | Grafana admin username. |
 | grafana.credentials.existingSecretName | string | `""` | Name of an existing secret for Grafana credentials. Leave empty to create a new secret. |
 | grafana.dashboards.jsonDirectory | string | `"dashboards"` | The directory containing JSON files for Grafana dashboards. |
-| grafana.dashboards.serverMetricsProfile | string | `"both"` | Which Server SLIs dashboard(s) to provision: `legacy` (Telegraf / <=4.9), `server410` (OTEL / 4.10+), or `both`. |
+| grafana.dashboards.serverMetricsProfile | string | `"legacy"` | Server SLIs dashboard to provision: `legacy` (Telegraf / <=4.9) or `server410` (OTEL / 4.10+). |
 | grafana.datasource.jsonData.timeInterval | string | `"5s"` | The time interval for Grafana to poll Prometheus. Specifies the frequency of data requests. |
 | grafana.enabled | string | `"-"` |  |
 | grafana.extraConfig | string | `""` | Add any custom Grafana configurations you require here. This should be a YAML-formatted string of additional settings for Grafana. |

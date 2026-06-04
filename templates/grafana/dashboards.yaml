@@ -2,7 +2,7 @@
 {{- if .grafanaEnabled }}
 
 {{- $jsonDir := .Values.grafana.dashboards.jsonDirectory -}}
-{{- $profile := .Values.grafana.dashboards.serverMetricsProfile | default "both" -}}
+{{- $profile := .Values.grafana.dashboards.serverMetricsProfile | default "legacy" -}}
 {{- range $path, $_ := .Files.Glob (printf "%s/*.json" $jsonDir) }}
 {{- if eq (include "grafana.dashboard.include" (dict "path" $path "profile" $profile)) "true" }}
 {{- $dashboardFileName := (base $path) }}

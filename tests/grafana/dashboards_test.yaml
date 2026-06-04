@@ -3,33 +3,20 @@ templates:
   - grafana/dashboards.yaml
 
 tests:
-  - it: should create all dashboards when serverMetricsProfile is both
+  - it: should provision legacy SLIs by default when serverMetricsProfile is unset
     set:
       grafana.dashboards.jsonDirectory: dashboards
-      grafana.dashboards.serverMetricsProfile: both
     asserts:
       - hasDocuments:
-          count: 3
+          count: 2
       - equal:
           path: metadata.name
           value: server-slis
         documentSelector:
           path: metadata.name
           value: server-slis
-      - equal:
-          path: metadata.name
-          value: server-slis-server4.10
-        documentSelector:
-          path: metadata.name
-          value: server-slis-server4.10
-      - matchRegex:
-          path: spec.json
-          pattern: '"title":\s*"Server SLIs \(4\.10\+\)"'
-        documentSelector:
-          path: metadata.name
-          value: server-slis-server4.10
 
-  - it: should provision legacy SLIs only when serverMetricsProfile is legacy
+  - it: should provision legacy SLIs when serverMetricsProfile is legacy
     set:
       grafana.dashboards.jsonDirectory: dashboards
       grafana.dashboards.serverMetricsProfile: legacy

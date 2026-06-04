@@ -63,10 +63,10 @@ Expose port **9273** on the collector Service (e.g. name `prom-metrics`) so Prom
 
 | Server version | Dashboard in Grafana | `serverMetricsProfile` |
 | --- | --- | --- |
-| <=4.9 (Telegraf) | **Server SLIs** | `legacy` or `both` (default) |
-| 4.10+ (OTEL) | **Server SLIs (4.10+)** | `server410` or `both` (default) |
+| <=4.9 (Telegraf) | **Server SLIs** | `legacy` (default) |
+| 4.10+ (OTEL) | **Server SLIs (4.10+)** | `server410` |
 
-For **4.10+ / OTEL-only** installs:
+On **Server 4.10+**:
 
 ```yaml
 grafana:
@@ -74,15 +74,7 @@ grafana:
     serverMetricsProfile: server410
 ```
 
-Legacy Telegraf installs:
-
-```yaml
-grafana:
-  dashboards:
-    serverMetricsProfile: legacy
-```
-
-Default `both` ships both SLI dashboards. The 4.10+ file omits five output/step panels with no OTEL series observed in testing; they remain on the legacy dashboard.
+The 4.10+ file omits five output/step panels with no OTEL series observed in testing; they remain on the legacy dashboard.
 
 #### Tracing
 
