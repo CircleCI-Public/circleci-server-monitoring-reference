@@ -2,7 +2,9 @@
 {{- if .grafanaEnabled }}
 
 {{- $jsonDir := .Values.grafana.dashboards.jsonDirectory -}}
+{{- $profile := .Values.grafana.dashboards.serverMetricsProfile | default "legacy" -}}
 {{- range $path, $_ := .Files.Glob (printf "%s/*.json" $jsonDir) }}
+{{- if eq (include "grafana.dashboard.include" (dict "path" $path "profile" $profile)) "true" }}
 {{- $dashboardFileName := (base $path) }}
 {{- $dashboardName := (trimSuffix ".json" $dashboardFileName | lower ) }}
 ---
@@ -19,6 +21,7 @@ spec:
       datasourceName: "Prometheus"
   json: |
 {{ $.Files.Get $path | nindent 4 }}
+{{- end }}
 {{- end }}
 
 {{- end }}

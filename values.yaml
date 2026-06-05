@@ -149,6 +149,9 @@ grafana:
   dashboards:
     # -- The directory containing JSON files for Grafana dashboards.
     jsonDirectory: dashboards
+    # -- Which Server SLIs dashboard to provision. Default `legacy` (Telegraf / Server <=4.9).
+    # Set `server410` on CircleCI Server 4.10+ (opentelemetry-collector metrics).
+    serverMetricsProfile: legacy
 
 tempo:
   # -- Enable Tempo distributed tracing

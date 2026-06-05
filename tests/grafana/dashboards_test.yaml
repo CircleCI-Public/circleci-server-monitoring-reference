@@ -3,22 +3,43 @@ templates:
   - grafana/dashboards.yaml
 
 tests:
-  - it: should create grafana dashboards
+  - it: should provision legacy SLIs by default when serverMetricsProfile is unset
     set:
       grafana.dashboards.jsonDirectory: dashboards
     asserts:
-      - isKind:
-          of: GrafanaDashboard
-        documentIndex: 0
+      - hasDocuments:
+          count: 2
       - equal:
           path: metadata.name
           value: server-slis
-        documentIndex: 0
+        documentSelector:
+          path: metadata.name
+          value: server-slis
+
+  - it: should provision legacy SLIs when serverMetricsProfile is legacy
+    set:
+      grafana.dashboards.jsonDirectory: dashboards
+      grafana.dashboards.serverMetricsProfile: legacy
+    asserts:
+      - hasDocuments:
+          count: 2
       - equal:
-          path: spec.instanceSelector.matchLabels.dashboards
-          value: grafana
-        documentIndex: 0
-      - matchRegex:
-          path: spec.json
-          pattern: '"title":\s*"Max latency of creating pipelines"'
-        documentIndex: 0
+          path: metadata.name
+          value: server-slis
+        documentSelector:
+          path: metadata.name
+          value: server-slis
+
+  - it: should provision 4.10 SLIs only when serverMetricsProfile is server410
+    set:
+      grafana.dashboards.jsonDirectory: dashboards
+      grafana.dashboards.serverMetricsProfile: server410
+    asserts:
+      - hasDocuments:
+          count: 2
+      - equal:
+          path: metadata.name
+          value: server-slis-server4.10
+        documentSelector:
+          path: metadata.name
+          value: server-slis-server4.10

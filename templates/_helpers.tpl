@@ -45,3 +45,21 @@ Compute if tempo is enabled.
   (eq (.Values.tempo.enabled | toString) "true")
   (and (eq (.Values.tempo.enabled | toString) "-") (eq (.Values.global.enabled | toString) "true"))) -}}
 {{- end -}}
+
+{{/*
+Return whether a dashboard JSON path should be provisioned for serverMetricsProfile.
+Profile legacy (default): Telegraf-era Server SLIs. server410: OTEL 4.10+ SLIs.
+*/}}
+{{- define "grafana.dashboard.include" -}}
+{{- $profile := .profile | default "legacy" -}}
+{{- $base := base .path -}}
+{{- $isServer410 := contains "server4.10" $base -}}
+{{- $isServerSlis := hasPrefix "server-slis" $base -}}
+{{- if eq $profile "legacy" -}}
+{{- if $isServer410 -}}false{{- else -}}true{{- end -}}
+{{- else if eq $profile "server410" -}}
+{{- if $isServer410 -}}true{{- else if $isServerSlis -}}false{{- else -}}true{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
