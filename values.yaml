@@ -46,9 +46,13 @@ prometheus:
       - key: app.kubernetes.io/name
         operator: In
         values: ["telegraf", "tempo", "opentelemetry-collector"]
-    # -- Namespaces to look for ServiceMonitor objects. Set this if the CircleCI
-    # server monitoring stack is deploying in a different namespace than the
-    # actual CircleCI server installation.
+    # -- Namespaces to watch for ServiceMonitor objects. Controls two things:
+    # (1) the Prometheus CR's serviceMonitorNamespaceSelector — which namespaces
+    # the Prometheus Operator scans for ServiceMonitor CRDs; and (2) the built-in
+    # ServiceMonitor's namespaceSelector — which namespaces it looks in for
+    # services to scrape. Leave empty to watch all namespaces. Set explicitly when
+    # ServiceMonitors live in namespaces other than the monitoring namespace
+    # (e.g. kube-system, kube-state-metrics, prometheus-node-exporter).
     selectorNamespaces: []
     endpoints:
       - # -- Port name for the Prometheus client service.
@@ -62,6 +66,33 @@ prometheus:
         metricRelabelings:
           - regex: instance
             action: labeldrop
+  infraServiceMonitors:
+    # -- Enable ServiceMonitor for CoreDNS (kube-dns).
+    coredns:
+      enabled: false
+      # -- Port name on the CoreDNS service exposing /metrics.
+      port: metrics
+    # -- Enable ServiceMonitor for kube-state-metrics.
+    # Set namespace to match where kube-state-metrics is deployed.
+    kubeStateMetrics:
+      enabled: false
+      namespace: kube-state-metrics
+      # -- Port name on the kube-state-metrics service. EKS addon names this "http";
+      # other distributions may use "metrics".
+      port: http
+    # -- Enable ServiceMonitor for prometheus-node-exporter.
+    # Set namespace to match where node exporter is deployed.
+    nodeExporter:
+      enabled: false
+      namespace: prometheus-node-exporter
+      # -- Port name on the node-exporter service exposing /metrics.
+      port: metrics
+    # -- Enable ServiceMonitor for kubelet and cAdvisor metrics.
+    kubelet:
+      enabled: false
+      # -- Port name on the kubelet service for both /metrics and /metrics/cadvisor.
+      port: https-metrics
+
   persistence:
     # -- Enable persistent storage for Prometheus.
     enabled: false

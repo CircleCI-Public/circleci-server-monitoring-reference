@@ -31,6 +31,14 @@ spec:
   serviceAccountName: {{ $name }}-prometheus
   version: {{ $tag }}
   serviceMonitorSelector: {}
+  {{- with .Values.prometheus.serviceMonitor.selectorNamespaces }}
+  {{- $ns := without . $.Release.Namespace | prepend $.Release.Namespace }}
+  serviceMonitorNamespaceSelector:
+    matchNames:
+{{ toYaml $ns | indent 4 }}
+  {{- else }}
+  serviceMonitorNamespaceSelector: {}
+  {{- end }}
   {{- with .Values.prometheus.persistence }}
   {{- if .enabled }}
   storage:
