@@ -13,10 +13,10 @@ spec:
   selector:
     matchLabels:
 {{ toYaml .selectorLabels | indent 6 }}
-{{- if .selectorNamespaces }}
+{{- if .selectorExpressions }}
     matchExpressions:
 {{ toYaml .selectorExpressions | indent 6 }}
-    {{- end }}
+{{- end }}
 {{- if .selectorNamespaces }}
   namespaceSelector:
     matchNames:
