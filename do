@@ -37,7 +37,7 @@ kubeconform() {
 help_lint_dashboards="Lint the Grafana dashboards using dashboard-linter."
 lint-dashboards() {
     install-go-bin "github.com/grafana/dashboard-linter@latest"
-    
+
     for dashboard in dashboards/*.json; do
         ./bin/dashboard-linter lint --strict --verbose "$dashboard"
     done
@@ -129,8 +129,29 @@ install-plugin() {
 }
 
 install-go-bin() {
+    local root_dir="${PWD}"
     for pkg in "${@}"; do
-        GOBIN="${PWD}/bin" go install "${pkg}" &
+        (
+            local errfile
+            errfile=$(mktemp)
+            if ! GOBIN="${root_dir}/bin" go install "${pkg}" 2>"${errfile}"; then
+                if grep -q "replace directives" "${errfile}"; then
+                    # Module has replace directives which go install rejects (Go 1.16+).
+                    # Clone and build from source so the module acts as main module.
+                    local module="${pkg%@*}"
+                    local tmpdir
+                    tmpdir=$(mktemp -d)
+                    git clone --quiet --depth=1 "https://${module}" "${tmpdir}"
+                    (cd "${tmpdir}" && go build -o "${root_dir}/bin/$(basename "${module}")" .)
+                    rm -rf "${tmpdir}"
+                else
+                    cat "${errfile}" >&2
+                    rm -f "${errfile}"
+                    exit 1
+                fi
+            fi
+            rm -f "${errfile}"
+        ) &
     done
     wait
 }
