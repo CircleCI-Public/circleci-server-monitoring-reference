@@ -16,7 +16,7 @@ This repository is currently under active development and is not yet a supported
 
 A reference Helm chart for setting up a monitoring stack for CircleCI server
 
-![Version: 0.1.0-alpha.12](https://img.shields.io/badge/Version-0.1.0--alpha.12-informational?style=flat-square)
+![Version: 0.1.0-alpha.14](https://img.shields.io/badge/Version-0.1.0--alpha.14-informational?style=flat-square)
 
 ## Installing the Monitoring Stack
 
@@ -72,7 +72,7 @@ Expose port **9273** on the collector Service (e.g. name `prom-metrics`) so Prom
 | <=4.9 (Telegraf) | **Server SLIs** | `legacy` (default) |
 | 4.10+ (OTEL) | **Server SLIs (4.10+)** | `server410` |
 
-On **Server 4.10+**, set:
+On **Server 4.10+**:
 
 ```yaml
 grafana:
@@ -80,7 +80,7 @@ grafana:
     serverMetricsProfile: server410
 ```
 
-The 4.10+ dashboard omits five panels that had no matching OTEL series in testing (output receiver/internal/public non-2xx, step receiver/internal 5xx). They remain on the legacy **Server SLIs** dashboard for <=4.9.
+The 4.10+ file omits five output/step panels with no OTEL series observed in testing; they remain on the legacy dashboard.
 
 #### Tracing
 
@@ -126,7 +126,7 @@ Before installing the full chart, you must first install the dependency subchart
 Install the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
-$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.12 -n <your-server-namespace>
+$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.14 -n <your-server-namespace>
 ```
 
 > **_NOTE:_** It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
@@ -163,7 +163,7 @@ $ kubectl wait --for=condition=available --timeout=120s deployment/tempo-operato
 Next, install the Helm chart using the following command:
 
 ```bash
-$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.12 -n <your-server-namespace>
+$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.14 -n <your-server-namespace>
 ```
 
 ### 5. Verify Prometheus Is Up and Targeting Telegraf
@@ -276,7 +276,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.credentials.adminUser | string | `"admin"` | Grafana admin username. |
 | grafana.credentials.existingSecretName | string | `""` | Name of an existing secret for Grafana credentials. Leave empty to create a new secret. |
 | grafana.dashboards.jsonDirectory | string | `"dashboards"` | The directory containing JSON files for Grafana dashboards. |
-| grafana.dashboards.serverMetricsProfile | string | `"legacy"` | Server SLIs dashboard to provision: `legacy` (Telegraf / <=4.9) or `server410` (OTEL / 4.10+). |
+| grafana.dashboards.serverMetricsProfile | string | `"legacy"` | Which Server SLIs dashboard to provision. Default `legacy` (Telegraf / Server <=4.9). Set `server410` on CircleCI Server 4.10+ (opentelemetry-collector metrics). |
 | grafana.datasource.jsonData.timeInterval | string | `"5s"` | The time interval for Grafana to poll Prometheus. Specifies the frequency of data requests. |
 | grafana.enabled | string | `"-"` |  |
 | grafana.extraConfig | string | `""` | Add any custom Grafana configurations you require here. This should be a YAML-formatted string of additional settings for Grafana. |
@@ -302,6 +302,14 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheus.enabled | string | `"-"` |  |
 | prometheus.image.repository | string | `"quay.io/prometheus/prometheus"` | Image repository for Prometheus. |
 | prometheus.image.tag | string | `"v3.2.1"` | Tag for the Prometheus image. |
+| prometheus.infraServiceMonitors.coredns | object | `{"enabled":false,"port":"metrics"}` | Enable ServiceMonitor for CoreDNS (kube-dns). |
+| prometheus.infraServiceMonitors.coredns.port | string | `"metrics"` | Port name on the CoreDNS service exposing /metrics. |
+| prometheus.infraServiceMonitors.kubeStateMetrics | object | `{"enabled":false,"namespace":"kube-state-metrics","port":"http"}` | Enable ServiceMonitor for kube-state-metrics. Set namespace to match where kube-state-metrics is deployed. |
+| prometheus.infraServiceMonitors.kubeStateMetrics.port | string | `"http"` | Port name on the kube-state-metrics service. EKS addon names this "http"; other distributions may use "metrics". |
+| prometheus.infraServiceMonitors.kubelet | object | `{"enabled":false,"port":"https-metrics"}` | Enable ServiceMonitor for kubelet and cAdvisor metrics. |
+| prometheus.infraServiceMonitors.kubelet.port | string | `"https-metrics"` | Port name on the kubelet service for both /metrics and /metrics/cadvisor. |
+| prometheus.infraServiceMonitors.nodeExporter | object | `{"enabled":false,"namespace":"prometheus-node-exporter","port":"metrics"}` | Enable ServiceMonitor for prometheus-node-exporter. Set namespace to match where node exporter is deployed. |
+| prometheus.infraServiceMonitors.nodeExporter.port | string | `"metrics"` | Port name on the node-exporter service exposing /metrics. |
 | prometheus.persistence.accessModes | list | `["ReadWriteOnce"]` | Access modes for the persistent volume. |
 | prometheus.persistence.enabled | bool | `false` | Enable persistent storage for Prometheus. |
 | prometheus.persistence.size | string | `"10Gi"` | Size of the persistent volume claim. |
@@ -314,7 +322,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | prometheus.serviceMonitor.endpoints[0].relabelings[0].regex | string | `"(container|endpoint|namespace|pod|service)"` |  |
 | prometheus.serviceMonitor.selectorExpressions | list | `[{"key":"app.kubernetes.io/name","operator":"In","values":["telegraf","tempo","opentelemetry-collector"]}]` | Match ServiceMonitors with specific names |
 | prometheus.serviceMonitor.selectorLabels | object | `{"app.kubernetes.io/instance":"circleci-server"}` | Labels to select ServiceMonitors for scraping metrics. By default, it's configured to scrape the existing Telegraf and Tempo deployments in CircleCI server. |
-| prometheus.serviceMonitor.selectorNamespaces | list | `[]` | Namespaces to look for ServiceMonitor objects. Set this if the CircleCI server monitoring stack is deploying in a different namespace than the actual CircleCI server installation. |
+| prometheus.serviceMonitor.selectorNamespaces | list | `[]` | Namespaces to watch for ServiceMonitor objects. Controls two things: (1) the Prometheus CR's serviceMonitorNamespaceSelector — which namespaces the Prometheus Operator scans for ServiceMonitor CRDs; and (2) the built-in ServiceMonitor's namespaceSelector — which namespaces it looks in for services to scrape. Leave empty to watch all namespaces. Set explicitly when ServiceMonitors live in namespaces other than the monitoring namespace (e.g. kube-system, kube-state-metrics, prometheus-node-exporter). |
 | prometheusOperator.crds.annotations."helm.sh/resource-policy" | string | `"keep"` |  |
 | prometheusOperator.enabled | string | `"-"` |  |
 | prometheusOperator.image.repository | string | `"quay.io/prometheus-operator/prometheus-operator"` | Image repository for Prometheus Operator. |
