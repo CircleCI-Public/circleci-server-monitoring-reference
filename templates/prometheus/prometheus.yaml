@@ -32,7 +32,7 @@ spec:
   version: {{ $tag }}
   serviceMonitorSelector: {}
   {{- with .Values.prometheus.serviceMonitor.selectorNamespaces }}
-  {{- $ns := without . $.Release.Namespace | prepend $.Release.Namespace }}
+  {{- $ns := prepend (without . $.Release.Namespace) $.Release.Namespace }}
   serviceMonitorNamespaceSelector:
     matchNames:
 {{ toYaml $ns | indent 4 }}
