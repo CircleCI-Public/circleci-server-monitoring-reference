@@ -56,7 +56,7 @@ jobs:
           command: helm template --debug .
           when: always
       - run:
-          command: helm lint --strict
+          command: helm lint --strict .
           when: always
       - run:
           command: ./do kubeconform
