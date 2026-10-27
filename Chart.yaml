@@ -1,7 +1,7 @@
 apiVersion: v2
 name: server-monitoring-stack
 description: A reference Helm chart for setting up a monitoring stack for CircleCI server
-version: 0.1.0-alpha.16
+version: 0.1.0-alpha.17
 dependencies:
   - name: prometheus-operator-crds
     version: 19.0.0
@@ -9,7 +9,7 @@ dependencies:
     condition: prometheusOperator.installCRDs
     alias: prometheusOperator
   - name: grafana-operator
-    version: v5.18.0
+    version: v5.25.0
     repository: "https://grafana.github.io/helm-charts"
     alias: grafanaoperator
     condition: grafanaoperator.enabled
