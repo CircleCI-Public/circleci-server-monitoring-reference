@@ -16,7 +16,7 @@ This repository is currently under active development and is not yet a supported
 
 A reference Helm chart for setting up a monitoring stack for CircleCI server
 
-![Version: 0.1.0-alpha.16](https://img.shields.io/badge/Version-0.1.0--alpha.16-informational?style=flat-square)
+![Version: 0.1.0-alpha.17](https://img.shields.io/badge/Version-0.1.0--alpha.17-informational?style=flat-square)
 
 ## Installing the Monitoring Stack
 
@@ -24,7 +24,7 @@ A reference Helm chart for setting up a monitoring stack for CircleCI server
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://grafana.github.io/helm-charts | grafanaoperator(grafana-operator) | v5.18.0 |
+| https://grafana.github.io/helm-charts | grafanaoperator(grafana-operator) | v5.25.0 |
 | https://prometheus-community.github.io/helm-charts | prometheusOperator(prometheus-operator-crds) | 19.0.0 |
 
 ### 1. Configure Server for the Monitoring Stack
@@ -126,7 +126,7 @@ Before installing the full chart, you must first install the dependency subchart
 Install the Prometheus Custom Resource Definitions (CRDs) and the Grafana operator chart. This assumes you are installing it in the same namespace as your CircleCI server installation:
 
 ```bash
-$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.16 -n <your-server-namespace>
+$ helm install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --set global.enabled=false --set prometheusOperator.installCRDs=true --version 0.1.0-alpha.17 -n <your-server-namespace>
 ```
 
 > **_NOTE:_** It's possible to install the monitoring stack in a different namespace than the CircleCI server installation. If you do so, set the `prometheus.serviceMonitor.selectorNamespaces` value with the target namespace.
@@ -158,12 +158,24 @@ $ kubectl rollout restart deployment/tempo-operator-controller -n tempo-operator
 $ kubectl wait --for=condition=available --timeout=120s deployment/tempo-operator-controller -n tempo-operator-system
 ```
 
+#### 3.3 Update the Grafana Operator CRDs (upgrades only)
+
+Skip this step on a new installation, since step 3.1 installs the CRDs. When you upgrade an existing installation, Helm does not update the Grafana operator CRDs. They are installed once and are left unchanged by `helm upgrade`. Apply the CRDs for the bundled Grafana operator version (`v5.25.0`) before running the upgrade in step 4:
+
+```bash
+$ kubectl apply --server-side --force-conflicts -f https://github.com/grafana/grafana-operator/releases/download/v5.25.0/crds.yaml
+```
+
+<!-- When you change the grafana-operator version in Chart.yaml, update the version in the URL above to match. -->
+
+> **_NOTE:_** Newer operator versions can add new CRDs (for example, `GrafanaManifest` and `GrafanaServiceAccount`) and update the schemas of existing ones. If you skip this step, the operator might fail to start or might ignore fields in your resources.
+
 ### 4. Install the Helm Chart
 
 Next, install the Helm chart using the following command:
 
 ```bash
-$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.16 -n <your-server-namespace>
+$ helm upgrade --install server-monitoring-stack server-monitoring-stack/server-monitoring-stack --reset-values --version 0.1.0-alpha.17 -n <your-server-namespace>
 ```
 
 ### 5. Verify Prometheus Is Up and Targeting Telegraf
@@ -281,7 +293,7 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.enabled | string | `"-"` |  |
 | grafana.extraConfig | string | `""` | Add any custom Grafana configurations you require here. This should be a YAML-formatted string of additional settings for Grafana. |
 | grafana.image.repository | string | `"grafana/grafana"` | Image repository for Grafana. |
-| grafana.image.tag | string | `"12.0.0-security-01"` | Tag for the Grafana image. |
+| grafana.image.tag | string | `"12.4.14"` | Tag for the Grafana image. |
 | grafana.ingress.className | string | `""` | Specifies the class of the Ingress controller. Required if the Kubernetes cluster includes multiple Ingress controllers. |
 | grafana.ingress.enabled | bool | `false` | Enable to create an Ingress resource for Grafana. Disabled by default. |
 | grafana.ingress.host | string | `""` | Hostname to use for the Ingress. Must be set if Ingress is enabled. |
@@ -295,10 +307,11 @@ Dashboards are provisioned directly from CRDs, which means any manual edits will
 | grafana.service.annotations | object | `{}` | Metadata annotations for the service. |
 | grafana.service.port | int | `3000` | Port on which the Grafana service will be exposed. |
 | grafana.service.type | string | `"ClusterIP"` | Specifies the type of service for Grafana. Options include ClusterIP, NodePort, or LoadBalancer. Use NodePort or LoadBalancer to expose Grafana externally. Ensure that grafana.credentials are set for security purposes. |
-| grafanaoperator | object | `{"fullnameOverride":"server-monitoring-grafana-operator","image":{"repository":"quay.io/grafana-operator/grafana-operator","tag":"v5.18.0"}}` | Full values for the Grafana Operator chart can be obtained at: https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
+| grafanaoperator | object | `{"fullnameOverride":"server-monitoring-grafana-operator","image":{"registry":"quay.io","repository":"grafana-operator/grafana-operator","tag":"v5.25.0"}}` | Full values for the Grafana Operator chart can be obtained at: https://github.com/grafana/grafana-operator/blob/master/deploy/helm/grafana-operator/values.yaml |
 | grafanaoperator.fullnameOverride | string | `"server-monitoring-grafana-operator"` | Overrides the fully qualified app name. |
-| grafanaoperator.image.repository | string | `"quay.io/grafana-operator/grafana-operator"` | Image repository for the Grafana Operator. |
-| grafanaoperator.image.tag | string | `"v5.18.0"` | Tag for the Grafana Operator image. |
+| grafanaoperator.image.registry | string | `"quay.io"` | Image registry for the Grafana Operator. |
+| grafanaoperator.image.repository | string | `"grafana-operator/grafana-operator"` | Image repository for the Grafana Operator. |
+| grafanaoperator.image.tag | string | `"v5.25.0"` | Tag for the Grafana Operator image. |
 | prometheus.enabled | string | `"-"` |  |
 | prometheus.image.repository | string | `"quay.io/prometheus/prometheus"` | Image repository for Prometheus. |
 | prometheus.image.tag | string | `"v3.2.1"` | Tag for the Prometheus image. |

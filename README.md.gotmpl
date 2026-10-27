@@ -152,6 +152,18 @@ $ kubectl rollout restart deployment/tempo-operator-controller -n tempo-operator
 $ kubectl wait --for=condition=available --timeout=120s deployment/tempo-operator-controller -n tempo-operator-system
 ```
 
+#### 3.3 Update the Grafana Operator CRDs (upgrades only)
+
+Skip this step on a new installation, since step 3.1 installs the CRDs. When you upgrade an existing installation, Helm does not update the Grafana operator CRDs. They are installed once and are left unchanged by `helm upgrade`. Apply the CRDs for the bundled Grafana operator version (`v5.25.0`) before running the upgrade in step 4:
+
+```bash
+$ kubectl apply --server-side --force-conflicts -f https://github.com/grafana/grafana-operator/releases/download/v5.25.0/crds.yaml
+```
+
+<!-- When you change the grafana-operator version in Chart.yaml, update the version in the URL above to match. -->
+
+> **_NOTE:_** Newer operator versions can add new CRDs (for example, `GrafanaManifest` and `GrafanaServiceAccount`) and update the schemas of existing ones. If you skip this step, the operator might fail to start or might ignore fields in your resources.
+
 ### 4. Install the Helm Chart
 
 Next, install the Helm chart using the following command:
